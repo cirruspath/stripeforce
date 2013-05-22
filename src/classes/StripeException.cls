@@ -1,0 +1,1 @@
+global class StripeException extends Exception {}
