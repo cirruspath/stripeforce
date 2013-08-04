@@ -1,15 +1,15 @@
 global class StripeCustomer {
 	private static final String SERVICE_URL = 'https://api.stripe.com/v1/customers';
-global Integer created;
-global Integer account_balance;
-global Next_recurring_charge next_recurring_charge;
-global String description;
-global StripeError error;
-global Boolean livemode;
-global StripeSubscription subscription;
-global String token;
-global String id;
-global StripeCard active_card;
+	global Integer created;
+	global Integer account_balance;
+	global Next_recurring_charge next_recurring_charge;
+	global String description;
+	global StripeError error;
+	global Boolean livemode;
+	global StripeSubscription subscription;
+	global String token;
+	global String id;
+	global StripeCard active_card;
 	
 	global class Next_recurring_charge {
 		global String stripeDate;
@@ -59,6 +59,7 @@ global StripeCard active_card;
 		
 		try {
 			StripeCustomer o = StripeCustomer.parse(response);
+//			if (o.error != null) throw new StripeException(o.error);
 			mCustomers.put(customerId, o);
 			return o;
 		} catch (System.JSONException e) {
@@ -125,12 +126,60 @@ global StripeCard active_card;
 		
 		try {
 			StripeCustomer new_customer = StripeCustomer.parse(hs.getBody());
+			if (new_customer.error != null) throw new StripeException(new_customer.error);
+
 			System.debug(System.LoggingLevel.INFO, '\n**** Customer: '+new_customer); 
 			mCustomers.put(new_customer.id, new_customer);
 			return new_customer;
 		} catch (System.JSONException e) {
 			return null;
 		}
+	}
+
+	global static StripeCustomer grantCoupon(String customerId, StripeCoupon coupon) {
+		HttpRequest http = new HttpRequest();
+		http.setEndpoint(StripeCustomer.SERVICE_URL+'/'+customerId);
+
+		http.setMethod('POST');
+		Blob headerValue = Blob.valueOf(Stripe.ApiKey + ':');
+		String authorizationHeader = 'BASIC ' +
+		EncodingUtil.base64Encode(headerValue);
+		http.setHeader('Authorization', authorizationHeader);
+		
+		Map<String, String> payload = new Map<String, String>{
+			'coupon' => coupon.id
+		};
+
+		http.setBody(Util.urlify(payload));
+		System.debug(System.LoggingLevel.INFO, '\n**** REQUEST BODY:\n'+http.getBody()); 	
+		
+		String response;
+		Integer statusCode;
+		Http con = new Http();
+		HttpResponse hs = new HttpResponse();
+		
+		if (!Test.isRunningTest()) {
+			try {
+				hs = con.send(http);
+				system.debug('#### [1]'+ hs.getBody());
+				
+			} catch (CalloutException e) {
+				return null;
+			}
+		} else {
+			hs.setBody(testData);
+			hs.setStatusCode(test_statusCode);
+		}
+		
+		statusCode = hs.getStatusCode();
+		system.debug('$$statusCode = '+hs.getStatusCode());
+		
+		try {
+			StripeCustomer new_customer = StripeCustomer.parse(hs.getBody());
+			return new_customer;
+		} catch (System.JSONException e) {
+			return null;
+		}		
 	}
 
 	global static StripeSubscription cancelSubscription(String customerId) {
@@ -177,8 +226,10 @@ global StripeCard active_card;
 	}
 
 	global static StripeSubscription updateSubscription(String customerId, String plan) {
-		//if (Test.isRunningTest()) Test.setMock(HttpCalloutMock.class, new MockHttpResponse(testData_updateSubscription, test_StatusCode));
-		
+		return updateSubscription(customerId, plan, null);
+	}
+
+	global static StripeSubscription updateSubscription(String customerId, String plan, Date trial_end) {
 		HttpRequest http = new HttpRequest();
 		http.setEndpoint(StripeCustomer.SERVICE_URL+'/'+customerId+'/subscription');
 		http.setMethod('POST');
@@ -190,6 +241,12 @@ global StripeCard active_card;
 		Map<String, String> payload = new Map<String, String>{
 			'plan' => plan
 		};
+
+		if (trial_end != null) {
+			DateTime dt = DateTime.newInstanceGmt(trial_end, Time.newInstance(0, 0, 0, 0));
+			Integer utc = (dt.getTime() / 1000).intValue();
+			payload.put('trial_end', String.valueOf(utc));
+		}
 		
 		http.setBody(StripeUtil.urlify(payload));	
 		System.debug(System.LoggingLevel.INFO, '\n**** REQUEST BODY:\n'+http.getBody());
@@ -270,29 +327,52 @@ global StripeCard active_card;
 		json = StripeUtil.cleanJson(json);
 		return (StripeCustomer) System.JSON.deserialize(json, StripeCustomer.class);
 	}
+
+	private static String testData_next_recurring_charge {
+		get {
+			DateTime d = DateTime.now().addYears(1);
+			return d.format('yyyy-MM-dd');
+		}
+	}
+
+	private static String testData_currentPeriodStart {
+		get {
+			DateTime d = DateTime.now();
+			Integer i = (d.getTime() / 1000).intValue();
+			return String.valueOf(i);
+		}
+	}
+	
+	private static String testData_currentPeriodEnd {
+		get {
+			DateTime d = DateTime.now().addYears(1);
+			Integer i = (d.getTime() / 1000).intValue();
+			return String.valueOf(i);
+		}
+	}
 	
 	private static String testData_getCustomer {
 		get {
 			// customer id cus_0mKFBsDi6XS2LB
-			return '{"created": 1332963923,"account_balance": 0,"next_recurring_charge": {"date": "2012-04-28","amount": 0},"description": "Cirrus Consulting Group","object": "customer","livemode": false,"subscription": {"status": "active","start": 1332963924,"current_period_start": 1332963924,"object": "subscription","plan": {"currency": "usd","object": "plan","interval": "month","livemode": false,"name": "Cirrus Insight Monthly","id": "CI_MONTHLY","amount": 0},"current_period_end": 1335642324,"customer": "cus_0mKFBsDi6XS2LB"},"id": "cus_0mKFBsDi6XS2LB","active_card": {"type": "Visa","country": "US","exp_month": 12,"fingerprint": "pmVir47Ti9dNLS50","exp_year": 2012,"last4": "4242","object": "card","id": "cc_huV3226cXd1OHf","cvc_check": "pass"}}';
+			return '{"created": 1332963923,"account_balance": 0,"next_recurring_charge": {"date": "'+testData_next_recurring_charge+'","amount": 0},"description": "Cirrus Consulting Group","object": "customer","livemode": false,"subscription": {"status": "active","start": '+testData_currentPeriodStart+',"current_period_start": '+testData_currentPeriodStart+',"object": "subscription","plan": {"currency": "usd","object": "plan","interval": "month","livemode": false,"name": "Cirrus Insight Monthly","id": "CI_MONTHLY","amount": 0},"current_period_end": '+testData_currentPeriodEnd+',"customer": "cus_0mKFBsDi6XS2LB"},"id": "cus_0mKFBsDi6XS2LB","active_card": {"type": "Visa","country": "US","exp_month": 12,"fingerprint": "pmVir47Ti9dNLS50","exp_year": 2012,"last4": "4242","object": "card","id": "cc_huV3226cXd1OHf","cvc_check": "pass"}}';
 		}
 	}
 	
 	private static String testData_cancelSubscription {
 		get {
-			return '{"object": "subscription", "status": "active", "current_period_start": 1320358651, "start": 1320358651, "current_period_end": 1322950651, "plan": { "object": "plan", "interval": "month", "currency": "usd", "amount": 2499, "livemode": false, "name": "My Plan", "id": "my_plan5" }, "customer": "cus_MLJBxWoSParcrX"}';
+			return '{"object": "subscription", "status": "active", "current_period_start": '+testData_currentPeriodStart+', "start": '+testData_currentPeriodStart+', "current_period_end": '+testData_currentPeriodEnd+', "plan": { "object": "plan", "interval": "month", "currency": "usd", "amount": 2499, "livemode": false, "name": "My Plan", "id": "my_plan5" }, "customer": "cus_MLJBxWoSParcrX"}';
 		}
 	}
 	
 	private static String testData_updateSubscription {
 		get {
-			return '{"status": "active","start": 1320358651,"plan": {"currency": "usd","object": "plan","interval": "month","livemode": false,"name": "My Plan","id": "my_plan5","amount": 2499},"object": "subscription","current_period_start": 1320358651,"current_period_end": 1322950651,"customer": "cus_MLJBxWoSParcrX"}';
+			return '{"status": "active","start": '+testData_currentPeriodStart+',"plan": {"currency": "usd","object": "plan","interval": "month","livemode": false,"name": "My Plan","id": "my_plan5","amount": 2499},"object": "subscription","current_period_start": '+testData_currentPeriodStart+',"current_period_end": '+testData_currentPeriodEnd+',"customer": "cus_MLJBxWoSParcrX"}';
 		}
 	}
 	
 	private static String testData_getCustomers {
 		get {
-			return '{ "count": 44, "data": [ { "next_recurring_charge": { "date": "2012-09-28", "amount": 0 }, "created": 1332963923, "object": "customer", "description": "Cirrus Consulting Group", "account_balance": 0, "subscription": { "status": "active", "current_period_start": 1346183124, "start": 1332963924, "object": "subscription", "plan": { "currency": "usd", "object": "plan", "amount": 0, "interval": "month", "livemode": false, "name": "Cirrus Insight Monthly", "id": "CI_MONTHLY" }, "current_period_end": 1348861524, "customer": "cus_0mKFBsDi6XS2LB" }, "livemode": false, "id": "cus_0mKFBsDi6XS2LB", "active_card": { "type": "Visa", "fingerprint": "pmVir47Ti9dNLS50", "object": "card", "address_city": null, "country": "US", "exp_month": 12, "last4": "4242", "cvc_check": "pass", "exp_year": 2012 } }, { "next_recurring_charge": { "date": "2012-09-28", "amount": 0 }, "created": 1332963773, "object": "customer", "description": "Cirrus Consulting Group", "account_balance": 0, "subscription": { "status": "active", "current_period_start": 1346182975, "start": 1332963775, "object": "subscription", "plan": { "currency": "usd", "object": "plan", "amount": 0, "interval": "month", "livemode": false, "name": "Cirrus Insight Monthly", "id": "CI_MONTHLY" }, "current_period_end": 1348861375, "customer": "cus_WoEUsq5xrvkTMC" }, "livemode": false, "id": "cus_WoEUsq5xrvkTMC", "active_card": { "type": "Visa", "fingerprint": "pmVir47Ti9dNLS50", "object": "card", "address_city": null, "country": "US", "exp_month": 12, "last4": "4242", "cvc_check": "pass", "exp_year": 2012 } }, { "next_recurring_charge": { "date": "2012-09-28", "amount": 0 }, "created": 1332963575, "object": "customer", "description": "Cirrus Consulting Group", "account_balance": 0, "subscription": { "status": "active", "current_period_start": 1346182776, "start": 1332963576, "object": "subscription", "plan": { "currency": "usd", "object": "plan", "amount": 0, "interval": "month", "livemode": false, "name": "Cirrus Insight Monthly", "id": "CI_MONTHLY" }, "current_period_end": 1348861176, "customer": "cus_JgLR1KUS0ir5iW" }, "livemode": false, "id": "cus_JgLR1KUS0ir5iW", "active_card": { "type": "Visa", "fingerprint": "pmVir47Ti9dNLS50", "object": "card", "address_city": null, "country": "US", "exp_month": 12, "last4": "4242", "cvc_check": "pass", "exp_year": 2012 } }, { "next_recurring_charge": { "date": "2012-09-28", "amount": 0 }, "created": 1332963282, "object": "customer", "description": "Cirrus Consulting Group", "account_balance": 0, "subscription": { "status": "active", "current_period_start": 1346182483, "start": 1332963283, "object": "subscription", "plan": { "currency": "usd", "object": "plan", "amount": 0, "interval": "month", "livemode": false, "name": "Cirrus Insight Monthly", "id": "CI_MONTHLY" }, "current_period_end": 1348860883, "customer": "cus_2MEr9Lraf1mnZH" }, "livemode": false, "id": "cus_2MEr9Lraf1mnZH", "active_card": { "type": "Visa", "fingerprint": "pmVir47Ti9dNLS50", "object": "card", "address_city": null, "country": "US", "exp_month": 12, "last4": "4242", "cvc_check": "pass", "exp_year": 2012 } }, { "created": 1325799745, "object": "customer", "account_balance": 0, "livemode": false, "id": "cus_uxec2nBO465s03", "active_card": { "address_line1": "", "type": "Visa", "address_zip_check": "pass", "address_line2": "", "address_line1_check": "pass", "fingerprint": "pmVir47Ti9dNLS50", "object": "card", "address_city": null, "country": "US", "address_zip": "92653", "address_state": "California", "name": "Cirruspath, LLC", "exp_month": 10, "last4": "4242", "cvc_check": "pass", "address_country": "", "exp_year": 2015 } }, { "created": 1325799712, "object": "customer", "account_balance": 0, "livemode": false, "id": "cus_dkcWtHbvBN96rd", "active_card": { "address_line1": "", "type": "Visa", "address_zip_check": "pass", "address_line2": "", "address_line1_check": "pass", "fingerprint": "pmVir47Ti9dNLS50", "object": "card", "address_city": null, "country": "US", "address_zip": "92653", "address_state": "California", "name": "Cirruspath, LLC", "exp_month": 10, "last4": "4242", "cvc_check": "pass", "address_country": "", "exp_year": 2015 } }, { "created": 1324201094, "object": "customer", "account_balance": 0, "livemode": false, "id": "cus_VlXUjgykF1KYx6", "active_card": { "address_line1": "", "type": "Visa", "address_zip_check": "pass", "address_line2": "", "address_line1_check": "pass", "fingerprint": "pmVir47Ti9dNLS50", "object": "card", "address_city": null, "country": "US", "address_zip": "", "address_state": "", "name": "Acme Co", "exp_month": 10, "last4": "4242", "cvc_check": "pass", "address_country": "", "exp_year": 2015 } } ] }';
+			return '{ "count": 44, "data": [ { "next_recurring_charge": { "date": "'+testData_next_recurring_charge+'", "amount": 0 }, "created": 1332963923, "object": "customer", "description": "Cirrus Consulting Group", "account_balance": 0, "subscription": { "status": "active", "current_period_start": '+testData_currentPeriodStart+', "start": '+testData_currentPeriodStart+', "object": "subscription", "plan": { "currency": "usd", "object": "plan", "amount": 0, "interval": "month", "livemode": false, "name": "Cirrus Insight Monthly", "id": "CI_MONTHLY" }, "current_period_end": '+testData_currentPeriodEnd+', "customer": "cus_0mKFBsDi6XS2LB" }, "livemode": false, "id": "cus_0mKFBsDi6XS2LB", "active_card": { "type": "Visa", "fingerprint": "pmVir47Ti9dNLS50", "object": "card", "address_city": null, "country": "US", "exp_month": 12, "last4": "4242", "cvc_check": "pass", "exp_year": 2012 } }, { "next_recurring_charge": { "date": "2012-09-28", "amount": 0 }, "created": 1332963773, "object": "customer", "description": "Cirrus Consulting Group", "account_balance": 0, "subscription": { "status": "active", "current_period_start": 1346182975, "start": 1332963775, "object": "subscription", "plan": { "currency": "usd", "object": "plan", "amount": 0, "interval": "month", "livemode": false, "name": "Cirrus Insight Monthly", "id": "CI_MONTHLY" }, "current_period_end": 1348861375, "customer": "cus_WoEUsq5xrvkTMC" }, "livemode": false, "id": "cus_WoEUsq5xrvkTMC", "active_card": { "type": "Visa", "fingerprint": "pmVir47Ti9dNLS50", "object": "card", "address_city": null, "country": "US", "exp_month": 12, "last4": "4242", "cvc_check": "pass", "exp_year": 2012 } }, { "next_recurring_charge": { "date": "2012-09-28", "amount": 0 }, "created": 1332963575, "object": "customer", "description": "Cirrus Consulting Group", "account_balance": 0, "subscription": { "status": "active", "current_period_start": 1346182776, "start": 1332963576, "object": "subscription", "plan": { "currency": "usd", "object": "plan", "amount": 0, "interval": "month", "livemode": false, "name": "Cirrus Insight Monthly", "id": "CI_MONTHLY" }, "current_period_end": 1348861176, "customer": "cus_JgLR1KUS0ir5iW" }, "livemode": false, "id": "cus_JgLR1KUS0ir5iW", "active_card": { "type": "Visa", "fingerprint": "pmVir47Ti9dNLS50", "object": "card", "address_city": null, "country": "US", "exp_month": 12, "last4": "4242", "cvc_check": "pass", "exp_year": 2012 } }, { "next_recurring_charge": { "date": "'+testData_next_recurring_charge+'", "amount": 0 }, "created": 1332963282, "object": "customer", "description": "Cirrus Consulting Group", "account_balance": 0, "subscription": { "status": "active", "current_period_start": 1346182483, "start": 1332963283, "object": "subscription", "plan": { "currency": "usd", "object": "plan", "amount": 0, "interval": "month", "livemode": false, "name": "Cirrus Insight Monthly", "id": "CI_MONTHLY" }, "current_period_end": 1348860883, "customer": "cus_2MEr9Lraf1mnZH" }, "livemode": false, "id": "cus_2MEr9Lraf1mnZH", "active_card": { "type": "Visa", "fingerprint": "pmVir47Ti9dNLS50", "object": "card", "address_city": null, "country": "US", "exp_month": 12, "last4": "4242", "cvc_check": "pass", "exp_year": 2012 } }, { "created": 1325799745, "object": "customer", "account_balance": 0, "livemode": false, "id": "cus_uxec2nBO465s03", "active_card": { "address_line1": "", "type": "Visa", "address_zip_check": "pass", "address_line2": "", "address_line1_check": "pass", "fingerprint": "pmVir47Ti9dNLS50", "object": "card", "address_city": null, "country": "US", "address_zip": "92653", "address_state": "California", "name": "Cirruspath, LLC", "exp_month": 10, "last4": "4242", "cvc_check": "pass", "address_country": "", "exp_year": 2015 } }, { "created": 1325799712, "object": "customer", "account_balance": 0, "livemode": false, "id": "cus_dkcWtHbvBN96rd", "active_card": { "address_line1": "", "type": "Visa", "address_zip_check": "pass", "address_line2": "", "address_line1_check": "pass", "fingerprint": "pmVir47Ti9dNLS50", "object": "card", "address_city": null, "country": "US", "address_zip": "92653", "address_state": "California", "name": "Cirruspath, LLC", "exp_month": 10, "last4": "4242", "cvc_check": "pass", "address_country": "", "exp_year": 2015 } }, { "created": 1324201094, "object": "customer", "account_balance": 0, "livemode": false, "id": "cus_VlXUjgykF1KYx6", "active_card": { "address_line1": "", "type": "Visa", "address_zip_check": "pass", "address_line2": "", "address_line1_check": "pass", "fingerprint": "pmVir47Ti9dNLS50", "object": "card", "address_city": null, "country": "US", "address_zip": "", "address_state": "", "name": "Acme Co", "exp_month": 10, "last4": "4242", "cvc_check": "pass", "address_country": "", "exp_year": 2015 } } ] }';
 		}
 	}
 	
@@ -319,15 +399,15 @@ global StripeCard active_card;
 				'  },'+
 				'  \"next_recurring_charge\": {'+
 				'    \"amount\": 0,'+
-				'    \"date\": \"2013-11-21\"'+
+				'    \"date\": \"'+testData_next_recurring_charge+'\"'+
 				'  },'+
 				'  \"subscription\": {'+
-				'    \"current_period_end\": 1385071454,'+
-				'    \"current_period_start\": 1320358651,'+
+				'    \"current_period_end\": '+testData_currentPeriodEnd+','+
+				'    \"current_period_start\": '+testData_currentPeriodStart+','+
 				'    \"customer\": \"cus_0mKFBsDi6XS2LB\",'+
 				'    \"object\": \"subscription\",'+
 				'    \"quantity\": 1,'+
-				'    \"start\": 1353535454,'+
+				'    \"start\": '+testData_currentPeriodStart+','+
 				'    \"status\": \"active\",'+
 				'    \"plan\": {'+
 				'      \"amount\": 0,'+
