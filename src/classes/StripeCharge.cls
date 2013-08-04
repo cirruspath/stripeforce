@@ -33,7 +33,7 @@ global class StripeCharge {
 		HttpRequest http = new HttpRequest();
 		http.setEndpoint(SERVICE_URL+'/'+chargeId);
 		http.setMethod('GET');
-		Blob headerValue = Blob.valueOf(StripeAPI.ApiKey + ':');
+		Blob headerValue = Blob.valueOf(API.ApiKey + ':');
 		String authorizationHeader = 'BASIC ' +
 		EncodingUtil.base64Encode(headerValue);
 		http.setHeader('Authorization', authorizationHeader);
@@ -78,7 +78,7 @@ global class StripeCharge {
 		HttpRequest http = new HttpRequest();
 		http.setEndpoint(SERVICE_URL);
 		http.setMethod('POST');
-		Blob headerValue = Blob.valueOf(StripeAPI.ApiKey + ':');
+		Blob headerValue = Blob.valueOf(API.ApiKey + ':');
 		String authorizationHeader = 'BASIC ' +
 		EncodingUtil.base64Encode(headerValue);
 		http.setHeader('Authorization', authorizationHeader);
@@ -92,7 +92,7 @@ global class StripeCharge {
 		if (description != null) {
 			payload.put('description', description);
 		}
-		http.setBody(StripeUtil.urlify(payload));
+		http.setBody(Util.urlify(payload));
 		System.debug(System.LoggingLevel.INFO, '\n**** REQUEST BODY:\n'+http.getBody()); 	
 		
 		String response;

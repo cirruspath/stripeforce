@@ -24,7 +24,7 @@ global class StripeSubscription {
 
 	public static StripeSubscription parse(String json) {
 		// rough string replacement to simplify json parsing and avoid Apex reserved words
-		json = StripeUtil.cleanJson(json);
+		json = Util.cleanJson(json);
 		return (StripeSubscription) System.JSON.deserialize(json, StripeSubscription.class);
 	}
 	

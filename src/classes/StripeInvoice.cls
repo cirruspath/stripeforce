@@ -46,7 +46,7 @@ global class StripeInvoice {
 		HttpRequest http = new HttpRequest();
 		http.setEndpoint(SERVICE_URL+'/'+invoiceId);
 		http.setMethod('GET');
-		Blob headerValue = Blob.valueOf(StripeAPI.ApiKey + ':');
+		Blob headerValue = Blob.valueOf(API.ApiKey + ':');
 		String authorizationHeader = 'BASIC ' +
 		EncodingUtil.base64Encode(headerValue);
 		http.setHeader('Authorization', authorizationHeader);
@@ -91,7 +91,7 @@ global class StripeInvoice {
 		http.setEndpoint(StripeInvoice.ITEMS_SERVICE_URL);
 
 		http.setMethod('POST');
-		Blob headerValue = Blob.valueOf(StripeAPI.ApiKey + ':');
+		Blob headerValue = Blob.valueOf(API.ApiKey + ':');
 		String authorizationHeader = 'BASIC ' +
 		EncodingUtil.base64Encode(headerValue);
 		http.setHeader('Authorization', authorizationHeader);
@@ -103,7 +103,7 @@ global class StripeInvoice {
 			'currency' => 'usd',
 			'amount' =>	charge_amount
 		};
-		http.setBody(StripeUtil.urlify(payload));
+		http.setBody(Util.urlify(payload));
 		System.debug(System.LoggingLevel.INFO, '\n**** REQUEST BODY:\n'+http.getBody()); 	
 		
 		String response;

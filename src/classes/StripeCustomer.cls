@@ -30,7 +30,7 @@ global class StripeCustomer {
 		HttpRequest http = new HttpRequest();
 		http.setEndpoint(StripeCustomer.SERVICE_URL+'/'+customerId);
 		http.setMethod('GET');
-		Blob headerValue = Blob.valueOf(StripeAPI.ApiKey + ':');
+		Blob headerValue = Blob.valueOf(API.ApiKey + ':');
 		String authorizationHeader = 'BASIC ' +
 		EncodingUtil.base64Encode(headerValue);
 		http.setHeader('Authorization', authorizationHeader);
@@ -89,7 +89,7 @@ global class StripeCustomer {
 			http.setEndpoint(StripeCustomer.SERVICE_URL+'/'+customerId);
 
 		http.setMethod('POST');
-		Blob headerValue = Blob.valueOf(StripeAPI.ApiKey + ':');
+		Blob headerValue = Blob.valueOf(API.ApiKey + ':');
 		String authorizationHeader = 'BASIC ' +
 		EncodingUtil.base64Encode(headerValue);
 		http.setHeader('Authorization', authorizationHeader);
@@ -100,7 +100,7 @@ global class StripeCustomer {
 		};
 		if (plan != null)	payload.put('plan', plan);
 
-		http.setBody(StripeUtil.urlify(payload));
+		http.setBody(Util.urlify(payload));
 		System.debug(System.LoggingLevel.INFO, '\n**** REQUEST BODY:\n'+http.getBody()); 	
 		
 		String response;
@@ -141,7 +141,7 @@ global class StripeCustomer {
 		http.setEndpoint(StripeCustomer.SERVICE_URL+'/'+customerId);
 
 		http.setMethod('POST');
-		Blob headerValue = Blob.valueOf(Stripe.ApiKey + ':');
+		Blob headerValue = Blob.valueOf(API.ApiKey + ':');
 		String authorizationHeader = 'BASIC ' +
 		EncodingUtil.base64Encode(headerValue);
 		http.setHeader('Authorization', authorizationHeader);
@@ -186,7 +186,7 @@ global class StripeCustomer {
 		HttpRequest http = new HttpRequest();
 		http.setEndpoint(StripeCustomer.SERVICE_URL+'/'+customerId+'/subscription');
 		http.setMethod('DELETE');
-		Blob headerValue = Blob.valueOf(StripeAPI.ApiKey + ':');
+		Blob headerValue = Blob.valueOf(API.ApiKey + ':');
 		String authorizationHeader = 'BASIC ' +
 		EncodingUtil.base64Encode(headerValue);
 		http.setHeader('Authorization', authorizationHeader);
@@ -233,7 +233,7 @@ global class StripeCustomer {
 		HttpRequest http = new HttpRequest();
 		http.setEndpoint(StripeCustomer.SERVICE_URL+'/'+customerId+'/subscription');
 		http.setMethod('POST');
-		Blob headerValue = Blob.valueOf(StripeAPI.ApiKey + ':');
+		Blob headerValue = Blob.valueOf(API.ApiKey + ':');
 		String authorizationHeader = 'BASIC ' +
 		EncodingUtil.base64Encode(headerValue);
 		http.setHeader('Authorization', authorizationHeader);
@@ -248,7 +248,7 @@ global class StripeCustomer {
 			payload.put('trial_end', String.valueOf(utc));
 		}
 		
-		http.setBody(StripeUtil.urlify(payload));	
+		http.setBody(Util.urlify(payload));	
 		System.debug(System.LoggingLevel.INFO, '\n**** REQUEST BODY:\n'+http.getBody());
 
 		String response;
@@ -286,7 +286,7 @@ global class StripeCustomer {
 		HttpRequest http = new HttpRequest();
 		http.setEndpoint(StripeCustomer.SERVICE_URL+'?count='+pageSize+'&offset='+offset);
 		http.setMethod('GET');
-		Blob headerValue = Blob.valueOf(StripeAPI.ApiKey + ':');
+		Blob headerValue = Blob.valueOf(API.ApiKey + ':');
 		String authorizationHeader = 'BASIC ' + EncodingUtil.base64Encode(headerValue);
 		http.setHeader('Authorization', authorizationHeader);
 		
@@ -312,7 +312,7 @@ global class StripeCustomer {
 		statusCode = hs.getStatusCode();
 		
 		try {
-			t_json = StripeUtil.cleanJson(t_json);
+			t_json = Util.cleanJson(t_json);
 			t_json = t_json.substring(t_json.indexOf('['), t_json.lastIndexOf(']')+1);
 			customers = (List<StripeCustomer>) JSON.deserialize(t_json, List<StripeCustomer>.class);
 			return customers;
@@ -324,7 +324,7 @@ global class StripeCustomer {
 
 	public static StripeCustomer parse(String json) {
 		// rough string replacement to simplify json parsing and avoid Apex reserved words
-		json = StripeUtil.cleanJson(json);
+		json = Util.cleanJson(json);
 		return (StripeCustomer) System.JSON.deserialize(json, StripeCustomer.class);
 	}
 
@@ -383,7 +383,7 @@ global class StripeCustomer {
 				'  \"account_balance\": 0,'+
 				'  \"created\": 1353535454,'+
 				'  \"description\": \"TEST 123\",'+
-				'  \"id\": \"cus_'+StripeUtil.generateRandomString(14)+'\",'+
+				'  \"id\": \"cus_'+Util.generateRandomString(14)+'\",'+
 				'  \"livemode\": false,'+
 				'  \"object\": \"customer\",'+
 				'  \"active_card\": {'+

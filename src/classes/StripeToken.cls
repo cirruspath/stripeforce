@@ -16,7 +16,7 @@ global class StripeToken {
 		HttpRequest http = new HttpRequest();
 		http.setEndpoint(StripeToken.SERVICE_URL+'/'+token);
 		http.setMethod('GET');
-		Blob headerValue = Blob.valueOf(StripeAPI.ApiKey + ':');
+		Blob headerValue = Blob.valueOf(API.ApiKey + ':');
 		String authorizationHeader = 'BASIC ' +
 		EncodingUtil.base64Encode(headerValue);
 		http.setHeader('Authorization', authorizationHeader);
@@ -79,7 +79,7 @@ global class StripeToken {
 	
 	public static StripeToken parse(String json) {
 		// rough string replacement to simplify json parsing and avoid Apex reserved words
-		json = StripeUtil.cleanJson(json);
+		json = Util.cleanJson(json);
 		System.debug(System.LoggingLevel.INFO, '\n**** '+json); 
 
 		return (StripeToken) System.JSON.deserialize(json, StripeToken.class);

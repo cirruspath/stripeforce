@@ -1,4 +1,4 @@
-global class StripeUtil {
+global class Util {
 
 	global static Boolean isNullOrEmpty(String s) {
 		if (s == null || s == '') return true;
@@ -70,7 +70,7 @@ global class StripeUtil {
 	}
 	
 	private static testMethod void test_cleanJson() {
-		StripeUtil.cleanJson('test');
+		Util.cleanJson('test');
 	}
 
 	private static testMethod void testUtil() {

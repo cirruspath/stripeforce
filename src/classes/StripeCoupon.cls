@@ -1,25 +1,25 @@
-public class StripeCoupon {
+global class StripeCoupon {
 	private static final String SERVICE_URL = 'https://api.stripe.com/v1/coupons';
 
-	public String id;
-	public Integer percent_off;
-	public Integer amount_off;
-	public String stripeCurrency;
-	public String stripeObject;
-	public Boolean livemode;
-	public String duration;
-	public Integer redeem_by;
-	public Integer max_redemptions;
-	public Integer times_redeemed;
-	public Integer duration_in_months;
+	global String id;
+	global Integer percent_off;
+	global Integer amount_off;
+	global String stripeCurrency;
+	global String stripeObject;
+	global Boolean livemode;
+	global String duration;
+	global Integer redeem_by;
+	global Integer max_redemptions;
+	global Integer times_redeemed;
+	global Integer duration_in_months;
 	
 	private static Integer test_StatusCode;
 
-	public static StripeCoupon getCoupon(String couponId) {
+	global static StripeCoupon getCoupon(String couponId) {
 		HttpRequest http = new HttpRequest();
 		http.setEndpoint(StripeCoupon.SERVICE_URL+'/'+couponId);
 		http.setMethod('GET');
-		Blob headerValue = Blob.valueOf(Stripe.ApiKey + ':');
+		Blob headerValue = Blob.valueOf(API.ApiKey + ':');
 		String authorizationHeader = 'BASIC ' +
 		EncodingUtil.base64Encode(headerValue);
 		http.setHeader('Authorization', authorizationHeader);
@@ -57,7 +57,7 @@ public class StripeCoupon {
 	/*
 	 * duration must be: 'forever', 'once', or 'repeating'
 	 */
-	public static StripeCoupon create(String couponId, String duration, Integer amount_off, Integer max_redemptions) {
+	global static StripeCoupon create(String couponId, String duration, Integer amount_off, Integer max_redemptions) {
 		HttpRequest http = new HttpRequest();
 		
 		if (couponId == null) 
@@ -66,7 +66,7 @@ public class StripeCoupon {
 			http.setEndpoint(StripeCoupon.SERVICE_URL+'/'+couponId);
 
 		http.setMethod('POST');
-		Blob headerValue = Blob.valueOf(Stripe.ApiKey + ':');
+		Blob headerValue = Blob.valueOf(API.ApiKey + ':');
 		String authorizationHeader = 'BASIC ' +
 		EncodingUtil.base64Encode(headerValue);
 		http.setHeader('Authorization', authorizationHeader);
@@ -110,9 +110,9 @@ public class StripeCoupon {
 		}		
 	}
 
-	public static StripeCoupon parse(String json) {
+	global static StripeCoupon parse(String json) {
 		// rough string replacement to simplify json parsing and avoid Apex reserved words
-		json = StripeUtil.cleanJson(json);
+		json = Util.cleanJson(json);
 		return (StripeCoupon) System.JSON.deserialize(json, StripeCoupon.class);
 	}
 	

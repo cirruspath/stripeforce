@@ -1,5 +1,10 @@
 @RestResource(urlMapping='/stripe/webhooks/v1/*')
 global class WebhookListener extends StripeWebhookListener {
+	/**
+	 * DO NOT PACKAGE THIS CLASS
+	 * This class is an example implementation of the listener clients would have to create
+	 *
+	 */
 
 	@HttpPost
 	global static void doPost() {
