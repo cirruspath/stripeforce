@@ -28,9 +28,4 @@ global class StripeSubscription {
 		return (StripeSubscription) System.JSON.deserialize(json, StripeSubscription.class);
 	}
 	
-	private static testMethod void test() {
-		new StripeSubscription();
-		new SubscriptionPeriod();
-		new Plan();
-	}
 }

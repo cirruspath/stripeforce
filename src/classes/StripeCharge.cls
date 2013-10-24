@@ -39,14 +39,13 @@ global class StripeCharge {
 	}
 	
 	global static StripeCharge getCharge(String chargeId, Boolean expandInvoice) {
-		//if (Test.isRunningTest()) Test.setMock(HttpCalloutMock.class, new MockHttpResponse(testData_getCharge, test_StatusCode));
 		HttpRequest http = new HttpRequest();
 		String endPoint = SERVICE_URL+'/'+chargeId;
 		if (expandInvoice) endPoint += '?expand[]=invoice';
-System.debug(System.LoggingLevel.INFO, '\n**** StripeCharge.getCharge endpoint: '+endPoint); 
+		System.debug(System.LoggingLevel.INFO, '\n**** StripeCharge.getCharge endpoint: '+endPoint); 
 		http.setEndpoint(endPoint);
 		http.setMethod('GET');
-		Blob headerValue = Blob.valueOf(API.ApiKey + ':');
+		Blob headerValue = Blob.valueOf(StripeAPI.ApiKey + ':');
 		String authorizationHeader = 'BASIC ' +
 		EncodingUtil.base64Encode(headerValue);
 		http.setHeader('Authorization', authorizationHeader);
@@ -63,7 +62,7 @@ System.debug(System.LoggingLevel.INFO, '\n**** StripeCharge.getCharge endpoint: 
 				return null;
 			}
 		} else {
-			hs.setBody(testData_getCharge);
+			hs.setBody(StripeChargeTests.testData_getCharge);
 			hs.setStatusCode(test_statusCode);
 		}
 
@@ -86,12 +85,10 @@ System.debug(System.LoggingLevel.INFO, '\n**** StripeCharge.getCharge endpoint: 
 	}
 	
 	global static StripeCharge create(String customerId, Decimal amount, String description) {
-		//if (Test.isRunningTest()) Test.setMock(HttpCalloutMock.class, new MockHttpResponse(testData_createCharge, test_StatusCode));
-
 		HttpRequest http = new HttpRequest();
 		http.setEndpoint(SERVICE_URL);
 		http.setMethod('POST');
-		Blob headerValue = Blob.valueOf(API.ApiKey + ':');
+		Blob headerValue = Blob.valueOf(StripeAPI.ApiKey + ':');
 		String authorizationHeader = 'BASIC ' +
 		EncodingUtil.base64Encode(headerValue);
 		http.setHeader('Authorization', authorizationHeader);
@@ -105,7 +102,7 @@ System.debug(System.LoggingLevel.INFO, '\n**** StripeCharge.getCharge endpoint: 
 		if (description != null) {
 			payload.put('description', description);
 		}
-		http.setBody(Util.urlify(payload));
+		http.setBody(StripeUtil.urlify(payload));
 		System.debug(System.LoggingLevel.INFO, '\n**** REQUEST BODY:\n'+http.getBody()); 	
 		
 		String response;
@@ -120,7 +117,7 @@ System.debug(System.LoggingLevel.INFO, '\n**** StripeCharge.getCharge endpoint: 
 				return null;
 			}
 		} else {
-			hs.setBody(testData_createCharge);
+			hs.setBody(StripeChargeTests.testData_createCharge);
 			hs.setStatusCode(test_statusCode);
 		}
 
@@ -148,60 +145,4 @@ System.debug(System.LoggingLevel.INFO, '\n**** StripeCharge.getCharge endpoint: 
 	}
 	
 	private static Integer test_StatusCode = 200;
-
-	private static String testData_getCharge {
-		get {
-			return '{"amount": 400, "invoice":"in_abcdefghijk", "created": 1341900078, "currency": "usd", "description": "Charge for rhuff@cirruspath.com", "disputed": false, "fee": 42, "id": "ch_GFAX3OIYUwQYU7", "livemode": false, "object": "charge", "paid": true, "refunded": false, "card": { "country": "US", "cvc_check": "pass", "exp_month": 12, "exp_year": 2012, "fingerprint": "pmVir47Ti9dNLS50", "last4": "4242", "object": "card", "type": "Visa" }, "fee_details": [ { "type": "stripe_fee", "description": "Stripe processing fees", "application": null, "amount": 42, "currency": "usd"}]}';
-		}
-	}
-	
-	private static string testData_createCharge {
-		get {
-			return '{"amount": 400, "created": 1341900078, "currency": "usd", "description": "Charge for rhuff@cirruspath.com", "disputed": false, "fee": 42, "id": "ch_GFAX3OIYUwQYU7", "livemode": false, "object": "charge", "paid": true, "refunded": false, "card": { "country": "US", "cvc_check": "pass", "exp_month": 12, "exp_year": 2012, "fingerprint": "pmVir47Ti9dNLS50", "last4": "4242", "object": "card", "type": "Visa" }, "fee_details": [ { "type": "stripe_fee", "description": "Stripe processing fees", "application": null, "amount": 42, "currency": "usd"}]}';
-		}
-	}
-	
-	private static string testData_error {
-		get {
-			return '{'+
-				'  \"error\": {'+
-				'    \"code\": \"incorrect_number\",'+
-				'    \"message\": \"Your card number is incorrect\",'+
-				'    \"param\": \"number\",'+
-				'    \"type\": \"card_error\"'+
-				'  }'+
-				'}';
-		}
-	}
-	
-	private static testMethod void test_createCharge() {
-		Test.startTest();
-		StripeCharge ch = create('ch_abcdefghijklmn', 400);
-		System.assertEquals('ch_GFAX3OIYUwQYU7', ch.id);
-		Test.stopTest();
-	}
-
-	private static testMethod void test_getCharge() {
-		Test.startTest();
-		StripeCharge ch = getCharge('ch_abcdefghijklmn');
-		System.assertEquals('ch_GFAX3OIYUwQYU7', ch.id);
-		Test.stopTest();
-	}
-
-	static testMethod void testParse() {
-		StripeCharge obj = parse(testData_createCharge);
-		System.assert(obj != null);
-	}
-
-	static testMethod void testParseError() {
-		StripeCharge obj = parse(testData_error);
-		System.assert(obj != null);
-		System.assert(obj.error != null);
-		System.assertEquals('Your card number is incorrect', obj.error.message);
-	}
-	
-	private static testMethod void test() {
-		new StripeCharge();
-		new Fee_details();
-	}
 }

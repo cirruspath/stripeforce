@@ -26,9 +26,9 @@ public class MockHttpResponse implements HttpCalloutMock {
 		return res;
 	}
 	
-	private static testMethod void test() {
-		new MockHttpResponse('asdf');
-		new MockHttpResponse('asdf', 200);
-		new MockHttpResponse('asdf', 200, 'application/json');
-	}
+//	private static testMethod void test() {
+//		new MockHttpResponse('asdf');
+//		new MockHttpResponse('asdf', 200);
+//		new MockHttpResponse('asdf', 200, 'application/json');
+//	}
 }

@@ -69,41 +69,4 @@ global class StripeUtil {
 		return json;
 	}
 	
-	private static testMethod void test_cleanJson() {
-		StripeUtil.cleanJson('test');
-	}
-
-	private static testMethod void testUtil() {
-		System.assertEquals(true, isNullOrEmpty(''));
-		System.assertEquals(true, isNullOrEmpty(null));
-		System.assertEquals(false, isNullOrEmpty('a'));
-		
-		Decimal d = 0, d2 = null;
-		System.assertEquals(true, isNullOrZero(d));
-		System.assertEquals(true, isNullOrZero(d2));
-		System.assertEquals(false, isNullOrZero(d+1));
-
-		Integer i = 0, i2 = null;
-		System.assertEquals(true, isNullOrZero(i));
-		System.assertEquals(true, isNullOrZero(i2));
-		System.assertEquals(false, isNullOrZero(i+1));
-
-		String s = null;
-		System.assertEquals('abc', coalesce('abc', 'def'));
-		System.assertEquals('def', coalesce(s, 'def'));
-		System.assertEquals('def', coalesce('', 'def'));
-		
-		System.assertEquals(1, coalesce(d, 1));
-		System.assertEquals(2, coalesce(d+2, 1));
-
-		System.assertEquals(1, coalesce(i, 1));
-		System.assertEquals(2, coalesce(i+2, 1));
-
-		System.assertEquals(Date.newInstance(2012, 1, 17), getDate(1326853478));
-		
-		String urlified = urlify(new Map<String, String>{'a'=>'1','b'=>'2'});
-		System.assert(urlified=='&a=1&b=2&'||urlified=='&b=2&a=1&', urlified);
-		
-		System.assert(generateRandomString(10).length() == 10);
-	}
 }

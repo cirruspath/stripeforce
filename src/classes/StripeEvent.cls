@@ -59,67 +59,6 @@ global class StripeEvent {
 		return json;
 	}
 
-	private static testMethod void testParse_InvoicePaymentSucceeded() {
-		String json = StripeListenerTests.testData_InvoicePaymentSucceeded;
-		StripeEvent event = parse(json);
-		System.assert(event != null);
-		System.assert(event.stripeData.StripeInvoice != null);
-		
-		StripeInvoice2 invoice = event.stripeData.StripeInvoice;
-		System.assertEquals(1, invoice.lines.invoiceitems.size());
-		System.assertEquals(1, invoice.lines.subscriptions.size());
-		
-		System.debug(System.LoggingLevel.INFO, '\n**** Invoice: '+event.stripeData.StripeInvoice); 
-	}
-
-	private static testMethod void testParse_InvoiceCreated() {
-		String json = StripeListenerTests.testData_InvoiceCreated;
-		StripeEvent event = parse(json);
-		System.assert(event != null);
-		System.assert(event.stripeData.StripeInvoice != null);
-		System.debug(System.LoggingLevel.INFO, '\n**** Invoice: '+event.stripeData.StripeInvoice); 
-	}
-
-	private static testMethod void testParse_ChargeSucceeded() {
-		String json = StripeListenerTests.testData_ChargeSucceeded;
-		StripeEvent event = parse(json);
-		System.assert(event != null);
-		System.assert(event.stripeData.StripeCharge != null);
-		System.debug(System.LoggingLevel.INFO, '\n**** Charge: '+event.stripeData.StripeCharge); 
-	}
-	
-	private static testMethod void testParse_ChargeRefunded() {
-		String json = StripeListenerTests.testData_ChargeRefunded;
-		StripeEvent event = parse(json);
-		System.assert(event != null);
-		System.assert(event.stripeData.StripeCharge != null);
-		System.debug(System.LoggingLevel.INFO, '\n**** Charge: '+event.stripeData.StripeCharge); 
-	}
-
-	private static testMethod void testParse_CustomerUpdated() {
-		String json = StripeListenerTests.testData_CustomerUpdated;
-		StripeEvent event = parse(json);
-		System.assert(event != null);
-		System.debug(System.LoggingLevel.INFO, '\n**** EVENT: '+event); 
-		System.assert(event.stripeData.StripeCustomer != null);
-		System.assert(event.stripeData.previous_attributes != null);
-		System.assert(event.stripeData.previous_attributes.active_card != null);
-		
-		System.debug(System.LoggingLevel.INFO, '\n**** Charge: '+event.stripeData.StripeCustomer); 
-	}
-
-	private static testMethod void testParse_CustomerSubscriptionDeleted() {
-		String json = StripeListenerTests.testData_CustomerSubscriptionDeleted;
-		StripeEvent event = parse(json);
-		System.assert(event != null);
-		System.assert(event.stripeData.StripeSubscription != null);
-		System.debug(System.LoggingLevel.INFO, '\n**** Subscription: '+event.stripeData.StripeSubscription); 
-	}
-
-	private static testMethod void test_general() {
-		new StripeEvent();
-		new StripeEvent.EventData();
-	}
 	
 	global class UnknownWebhookException extends Exception {}
 }

@@ -16,6 +16,4 @@ global class StripeCard {
 			return d;
 		}
 	}
-	
-	private static testMethod void test() { new StripeCard(); }
 }

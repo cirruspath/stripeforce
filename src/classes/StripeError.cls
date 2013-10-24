@@ -4,7 +4,4 @@ global class StripeError {
 	global String message;
 	global String code;
 	
-	private static testMethod void test() {
-		new StripeError();
-	}
 }

@@ -20,7 +20,7 @@ global abstract class StripeWebhookListener {
 		}
 
 		// prevent tests from hitting production
-		if (event.livemode == false && API.isTest == false) {
+		if (event.livemode == false && StripeAPI.isTest == false) {
 			System.debug(System.LoggingLevel.INFO, '\n**** Bailing out'); 
 			return;
 		}
