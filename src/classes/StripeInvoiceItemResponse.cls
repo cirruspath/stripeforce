@@ -1,7 +1,7 @@
 global class StripeInvoiceItemResponse {
 
 	global Boolean livemode;
-	global String invoice;
+	global String invoice_id;
 	global Boolean proration;
 	global Integer stripeDate;
 	global String id;
@@ -12,10 +12,7 @@ global class StripeInvoiceItemResponse {
 	global StripeError error;
 	
 	global static StripeInvoiceItemResponse parse(String json) {
-		json = json.replaceAll('"date":', '"stripeDate":');
-		json = json.replaceAll('"type":', '"stripeType":');
-		json = json.replaceAll('"currency":', '"stripeCurrency":');
-
+		json = StripeUtil.cleanJson(json);
 		return (StripeInvoiceItemResponse) System.JSON.deserialize(json, StripeInvoiceItemResponse.class);
 	}
 	

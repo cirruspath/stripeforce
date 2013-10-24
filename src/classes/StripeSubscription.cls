@@ -4,7 +4,7 @@ global class StripeSubscription {
 	global Integer current_period_start;
 	global Plan plan;
 	global Integer current_period_end;
-	global String customer;
+	global String customer_id;
 	global StripeError error;
 	global SubscriptionPeriod period;
 
@@ -24,7 +24,7 @@ global class StripeSubscription {
 
 	public static StripeSubscription parse(String json) {
 		// rough string replacement to simplify json parsing and avoid Apex reserved words
-		json = Util.cleanJson(json);
+		json = StripeUtil.cleanJson(json);
 		return (StripeSubscription) System.JSON.deserialize(json, StripeSubscription.class);
 	}
 	

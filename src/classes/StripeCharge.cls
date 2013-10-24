@@ -4,7 +4,8 @@ global class StripeCharge {
 	global Integer amount;
 	global Integer created;
 	global String stripeCurrency;
-	global String customer;
+	global String customer_id;
+	global StripeCustomer customer;
 	global String description;
 	global Boolean disputed;
 	global Integer fee;
@@ -17,9 +18,14 @@ global class StripeCharge {
 	global StripeCard card;
 	global List<Fee_details> fee_details;
 	global StripeError error;
-	global String invoice;
+	global String invoice_id;
+	global StripeInvoice invoice;
 	global String failure_message;
 
+	// This has changed in the 2013-02-13 API
+	// https://stripe.com/docs/upgrades#2013-02-13
+	// And more recently on 2013-08-13
+	// https://stripe.com/docs/upgrades#2013-08-13
 	global class Fee_details {
 		global String stripeType;
 		global String description;
@@ -29,9 +35,16 @@ global class StripeCharge {
 	}
 
 	global static StripeCharge getCharge(String chargeId) {
+		return StripeCharge.getCharge(chargeId, false);
+	}
+	
+	global static StripeCharge getCharge(String chargeId, Boolean expandInvoice) {
 		//if (Test.isRunningTest()) Test.setMock(HttpCalloutMock.class, new MockHttpResponse(testData_getCharge, test_StatusCode));
 		HttpRequest http = new HttpRequest();
-		http.setEndpoint(SERVICE_URL+'/'+chargeId);
+		String endPoint = SERVICE_URL+'/'+chargeId;
+		if (expandInvoice) endPoint += '?expand[]=invoice';
+System.debug(System.LoggingLevel.INFO, '\n**** StripeCharge.getCharge endpoint: '+endPoint); 
+		http.setEndpoint(endPoint);
 		http.setMethod('GET');
 		Blob headerValue = Blob.valueOf(API.ApiKey + ':');
 		String authorizationHeader = 'BASIC ' +
@@ -83,7 +96,7 @@ global class StripeCharge {
 		EncodingUtil.base64Encode(headerValue);
 		http.setHeader('Authorization', authorizationHeader);
 		
-		Integer amount_int = (amount * 100).intValue();
+		Integer amount_int = Math.round(amount * 100);//.intValue();
 		Map<String, String> payload = new Map<String, String>{
 			'customer' => customerId,
 			'amount' => String.valueOf(amount_int),
@@ -129,9 +142,7 @@ global class StripeCharge {
 
 	public static StripeCharge parse(String json) {
 		// rough string replacement to simplify json parsing and avoid Apex reserved words
-		json = json.replaceAll('"object":', '"stripeObject":');
-		json = json.replaceAll('"type":', '"stripeType":');
-		json = json.replaceAll('"currency":', '"stripecurrency":');
+		json = StripeUtil.cleanJson(json);
 
 		return (StripeCharge) System.JSON.deserialize(json, StripeCharge.class);
 	}

@@ -4,11 +4,11 @@ global class StripeToken {
 	global Integer created;
 	global Boolean used;
 	global StripeCard card;
-	global String stripeCurrency;
+	global String stripeCurrency // deprecated;
 	global String stripeObject;
 	global Boolean livemode;
 	global String id;
-	global Integer amount;
+	global Integer amount // deprecated;
 	global StripeError error;
 
 	global static StripeToken getToken(String token) {
@@ -79,7 +79,7 @@ global class StripeToken {
 	
 	public static StripeToken parse(String json) {
 		// rough string replacement to simplify json parsing and avoid Apex reserved words
-		json = Util.cleanJson(json);
+		json = StripeUtil.cleanJson(json);
 		System.debug(System.LoggingLevel.INFO, '\n**** '+json); 
 
 		return (StripeToken) System.JSON.deserialize(json, StripeToken.class);

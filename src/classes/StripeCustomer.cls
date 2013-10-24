@@ -9,9 +9,12 @@ global class StripeCustomer {
 	global StripeSubscription subscription;
 	global String token;
 	global String id;
+
+	// This has changed in the 2013-07-05 API
+	// https://stripe.com/docs/upgrades#2013-07-05
 	global StripeCard active_card;
 	
-	global class Next_recurring_charge {
+	global class Next_recurring_charge {  // deprecated
 		global String stripeDate;
 		global Integer amount;
 	}
@@ -312,7 +315,7 @@ global class StripeCustomer {
 		statusCode = hs.getStatusCode();
 		
 		try {
-			t_json = Util.cleanJson(t_json);
+			t_json = StripeUtil.cleanJson(t_json);
 			t_json = t_json.substring(t_json.indexOf('['), t_json.lastIndexOf(']')+1);
 			customers = (List<StripeCustomer>) JSON.deserialize(t_json, List<StripeCustomer>.class);
 			return customers;
@@ -324,7 +327,7 @@ global class StripeCustomer {
 
 	public static StripeCustomer parse(String json) {
 		// rough string replacement to simplify json parsing and avoid Apex reserved words
-		json = Util.cleanJson(json);
+		json = StripeUtil.cleanJson(json);
 		return (StripeCustomer) System.JSON.deserialize(json, StripeCustomer.class);
 	}
 
