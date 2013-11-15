@@ -2,21 +2,20 @@ global class StripeCustomer {
 	private static final String SERVICE_URL = 'https://api.stripe.com/v1/customers';
 	global Integer created;
 	global Integer account_balance;
-	global Next_recurring_charge next_recurring_charge;
 	global String description;
 	global StripeError error;
 	global Boolean livemode;
 	global StripeSubscription subscription;
 	global String token;
 	global String id;
-
-	// This has changed in the 2013-07-05 API
-	// https://stripe.com/docs/upgrades#2013-07-05
-	global StripeCard active_card;
 	
-	global class Next_recurring_charge {  // deprecated
-		global String stripeDate;
-		global Integer amount;
+	global CardList cards;
+	global String default_card;
+	
+	global class CardList {
+		global Integer count;
+		global String url;
+		global List<StripeCard> stripeData;
 	}
 
 	// static cache to eliminate multiple lookups in same transaction
@@ -59,6 +58,7 @@ global class StripeCustomer {
 		
 		try {
 			StripeCustomer o = StripeCustomer.parse(response);
+			System.debug(System.LoggingLevel.INFO, '\n**** Stripe Customer: '+o); 
 //			if (o.error != null) throw new StripeException(o.error);
 			mCustomers.put(customerId, o);
 			return o;
@@ -318,6 +318,16 @@ global class StripeCustomer {
 		} catch (System.JSONException e) {
 			return null;
 		}
+	}
+	
+	public StripeCard getDefaultCard() {
+		for (StripeCard card : this.cards.stripeData) {
+			if (card.id == this.default_card) {
+				return card;
+			}
+		}
+
+		return null;
 	}
 
 	public static StripeCustomer parse(String json) {

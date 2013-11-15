@@ -2,7 +2,6 @@ global class StripeEvent {
 	
 	global String stripeType;
 	global Integer created;
-	global Integer pending_webhooks;
 	global EventData stripeData;
 	global Boolean livemode;
 	global String id;
@@ -10,8 +9,8 @@ global class StripeEvent {
 	
 	private static Map<String, String> supported_events = new Map<String, String>{
 		'invoice.created' => 'StripeInvoice', 
-		'invoice.payment_succeeded' => 'StripeInvoice', 
-		'invoice.payment_failed' => 'StripeInvoice', 
+		'invoice.payment_succeeded' => 'StripeInvoice',
+		'invoice.payment_failed' => 'StripeInvoice',
 		'customer.subscription.deleted' => 'StripeSubscription',
 		'customer.updated' => 'StripeCustomer',
 		'charge.succeeded' => 'StripeCharge',
@@ -26,14 +25,8 @@ global class StripeEvent {
 		global StripeInvoice StripeInvoice;
 		global StripeSubscription StripeSubscription;
 		global StripeCustomer StripeCustomer;
-
-		global PreviousAttributes previous_attributes;
 	}
 	
-	global class PreviousAttributes {
-		global StripeCard active_card;
-	}
-
 	public static StripeEvent parse(String json) {
 		json = rationalize(json);
 		json = StripeUtil.cleanJson(json);

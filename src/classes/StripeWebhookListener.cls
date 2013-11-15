@@ -32,12 +32,7 @@ global abstract class StripeWebhookListener {
 			// Invoice Webhooks
 			//
 			if (event.stripeType == 'invoice.created') {
-				StripeInvoice invoice = event.stripeData.StripeInvoice;
-				if (invoice.paid == false) {
-					handle_InvoiceCreated(event.stripeData.StripeInvoice);
-				} else {
-					System.debug(System.LoggingLevel.INFO, '\n**** Invoice is paid. Bailing out.'); 
-				}
+				handle_InvoiceCreated(event.stripeData.StripeInvoice);
 
 			} else if (event.stripeType == 'invoice.payment_succeeded') {
 				handle_InvoicePaymentSucceeded(event.stripeData.StripeInvoice);
@@ -52,7 +47,6 @@ global abstract class StripeWebhookListener {
 			//
 			else if (event.stripeType == 'customer.subscription.deleted') {
 				handle_CustomerSubscriptionDeleted(event.stripeData.StripeSubscription);
-
 			}
 
 			//

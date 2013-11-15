@@ -140,7 +140,6 @@ public class StripeEventTests {
 	private static testMethod void test_general() {
 		new StripeEvent();
 		new StripeEvent.EventData();
-		new StripeEvent.PreviousAttributes();
 		new StripeEvent.UnknownWebhookException();
 	}
 

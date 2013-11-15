@@ -109,10 +109,6 @@ public class StripeInvoiceTests {
 				'      ]'+
 				'    },'+
 				'    "default_card": "card_2WWynYtWC1y0NL",'+
-				'    "next_recurring_charge": {'+
-				'      "date": "2013-10-06",'+
-				'      "amount": 0'+
-				'    },'+
 				'    "active_card": {'+
 				'      "id": "card_2WWynYtWC1y0NL",'+
 				'      "object": "card",'+

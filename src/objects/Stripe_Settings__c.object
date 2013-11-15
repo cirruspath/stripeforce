@@ -4,6 +4,16 @@
     <customSettingsVisibility>Protected</customSettingsVisibility>
     <enableFeeds>false</enableFeeds>
     <fields>
+        <fullName>Delayed_Webhook_Processor_ID__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>ID of the scheduled job</inlineHelpText>
+        <label>Delayed Webhook Processor ID</label>
+        <length>18</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Is_Live_Environment__c</fullName>
         <defaultValue>false</defaultValue>
         <externalId>false</externalId>
@@ -21,6 +31,44 @@
         <required>true</required>
         <type>Text</type>
         <unique>true</unique>
+    </fields>
+    <fields>
+        <fullName>Stripe_Publishable_Live_Key__c</fullName>
+        <externalId>false</externalId>
+        <label>Stripe Publishable Live Key</label>
+        <length>40</length>
+        <required>true</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Stripe_Publishable_Test_Key__c</fullName>
+        <externalId>false</externalId>
+        <label>Stripe Publishable Test Key</label>
+        <length>40</length>
+        <required>true</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Stripe_Secret_Live_Key__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>LIVE Stripe API Key</inlineHelpText>
+        <label>Stripe Secret Live Key</label>
+        <length>40</length>
+        <required>true</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Stripe_Secret_Test_Key__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>TEST Stripe API key</inlineHelpText>
+        <label>Stripe Secret Test Key</label>
+        <length>40</length>
+        <required>true</required>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Stripe_Test_Key__c</fullName>
