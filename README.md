@@ -1,6 +1,8 @@
 Stripe API Client Library for Force.com
 ========================================
 
+[Stripe](http://stripe.com) is a fantastic developer-friendly payment processing platform. This client library was originally developed by Cirruspath in 2012. Please send comments, pull requests, and questions here on github.
+
 Stripe API Documentation
 ------------------------
 Read up: https://stripe.com/docs/api
