@@ -8,6 +8,7 @@ global class StripeCustomer {
 	global StripeSubscription subscription;
 	global String token;
 	global String id;
+	global Map<String, String> metadata;
 	
 	global CardList cards;
 	global String default_card;
@@ -81,6 +82,10 @@ global class StripeCustomer {
 	}
 	
 	global static StripeCustomer updateCustomer(String customerId, String token, String plan, String description) {
+		return updateCustomer(customerId, token, null, description, null);
+	}
+
+	global static StripeCustomer updateCustomer(String customerId, String token, String plan, String description, Map<String, String> metadata) {
 		HttpRequest http = new HttpRequest();
 		
 		if (customerId == null) 
@@ -98,6 +103,13 @@ global class StripeCustomer {
 			'card' => token,
 			'description' => description
 		};
+
+		if (metadata != null) {
+			for (String key : metadata.keySet()) {
+				payload.put('metadata['+key+']', metadata.get(key));
+			}
+		}
+
 		if (plan != null)	payload.put('plan', plan);
 
 		http.setBody(StripeUtil.urlify(payload));

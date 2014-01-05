@@ -21,6 +21,7 @@ global class StripeCharge {
 	global String invoice_id;
 	global StripeInvoice invoice;
 	global String failure_message;
+	global Map<String, String> metadata;
 
 	// This has changed in the 2013-02-13 API
 	// https://stripe.com/docs/upgrades#2013-02-13
@@ -85,6 +86,10 @@ global class StripeCharge {
 	}
 	
 	global static StripeCharge create(String customerId, Decimal amount, String description) {
+		return StripeCharge.create(customerId, amount, null, null);
+	}
+
+	global static StripeCharge create(String customerId, Decimal amount, String description, Map<String, String> metadata) {
 		HttpRequest http = new HttpRequest();
 		http.setEndpoint(SERVICE_URL);
 		http.setMethod('POST');
@@ -99,6 +104,13 @@ global class StripeCharge {
 			'amount' => String.valueOf(amount_int),
 			'currency' => 'usd'
 		};
+
+		if (metadata != null) {
+			for (String key : metadata.keySet()) {
+				payload.put('metadata['+key+']', metadata.get(key));
+			}
+		}
+
 		if (description != null) {
 			payload.put('description', description);
 		}
