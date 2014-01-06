@@ -122,6 +122,11 @@ public class StripeCustomerTests {
 		Test.stopTest();
 	}
 
+	private static testMethod void testGrantCoupon() {
+		StripeCoupon coupon = StripeCoupon.getCoupon('25OFF');
+		StripeCustomer.grantCoupon('cus_abcdefghijklmn', coupon);		
+	}
+	
 	private static testMethod void test_updateSubscription_200() {
 		Test.startTest();
 		StripeSubscription sub = StripeCustomer.updateSubscription('cus_abcdefghijklmn', 'asdf');

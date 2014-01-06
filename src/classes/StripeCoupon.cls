@@ -37,8 +37,8 @@ global class StripeCoupon {
 				return null;
 			}
 		} else {
-//			hs.setBody(StripeCouponTests.testData);
-			hs.setStatusCode(test_statusCode);
+			hs.setBody(StripeCouponTests.testData);
+			hs.setStatusCode(200);
 		}
 		system.debug('#### '+ hs.getBody());
 		
@@ -95,8 +95,8 @@ global class StripeCoupon {
 				return null;
 			}
 		} else {
-//			hs.setBody(StripeCouponTests.testData);
-			hs.setStatusCode(test_statusCode);
+			hs.setBody(StripeCouponTests.testData);
+			hs.setStatusCode(200);
 		}
 		
 		statusCode = hs.getStatusCode();

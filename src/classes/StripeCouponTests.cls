@@ -1,7 +1,7 @@
 @isTest
 public class StripeCouponTests {
 
-	private static String testData {
+	public static String testData {
 		get {
 			String json = '{'+
 			'  \"id\": \"25OFF\",'+
@@ -20,10 +20,21 @@ public class StripeCouponTests {
 		}
 	}
 	
-	static testMethod void testParse() {
+	private static testMethod void testParse() {
 		StripeCoupon obj = StripeCoupon.parse(testData);
 		System.assert(obj != null);
+		new StripeCoupon();
 	}
-
-
+	
+	private static testMethod void testGetCoupon() {
+		StripeCoupon coupon = StripeCoupon.getCoupon('25OFF');
+		System.assertEquals('25OFF', coupon.id);
+		System.assertEquals(25, coupon.percent_off);
+	}
+	
+	private static testMethod void testCreateCoupon() {
+		StripeCoupon coupon = StripeCoupon.create('25OFF', 'once', 25, 3);
+		System.assertEquals('25OFF', coupon.id);
+		System.assertEquals(25, coupon.percent_off);		
+	}
 }
