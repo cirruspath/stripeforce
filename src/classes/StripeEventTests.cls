@@ -58,6 +58,70 @@ public class StripeEventTests {
 	}
 */
 
+	public static String testData_ChargeSucceeded {
+		get {
+			return '{'+
+				'  "id": "evt_3FvJU0yHT8Or0d",'+
+				'  "created": 1388961213,'+
+				'  "livemode": true,'+
+				'  "type": "charge.succeeded",'+
+				'  "data": {'+
+				'    "object": {'+
+				'      "id": "ch_3FvJ2jGVU5GKby",'+
+				'      "object": "charge",'+
+				'      "created": 1388961212,'+
+				'      "livemode": true,'+
+				'      "paid": true,'+
+				'      "amount": 2500,'+
+				'      "currency": "usd",'+
+				'      "refunded": false,'+
+				'      "card": {'+
+				'        "id": "card_2WClDb6BbOcgPv",'+
+				'        "object": "card",'+
+				'        "last4": "1002",'+
+				'        "type": "American Express",'+
+				'        "exp_month": 4,'+
+				'        "exp_year": 2015,'+
+				'        "fingerprint": "aXhZ3iZ1HDSpSB8Q",'+
+				'        "customer": null,'+
+				'        "country": "US",'+
+				'        "name": "Joe Johnson",'+
+				'        "address_line1": "123 East Main St",'+
+				'        "address_city": "Cityville",'+
+				'        "address_state": "MN",'+
+				'        "address_zip": "55386",'+
+				'        "address_country": "US",'+
+				'        "address_line1_check": "pass",'+
+				'        "address_zip_check": "pass"'+
+				'      },'+
+				'      "captured": true,'+
+				'      "balance_transaction": "txn_3FvJuqv1oEkoCb",'+
+				'      "failure_code": null,'+
+				'      "customer": "cus_2WClb0rZ2Y7aiF",'+
+				'      "invoice": "in_3FuKuZl2PcOqa2",'+
+				'      "dispute": null,'+
+				'      "metadata": {"renewal": "no", "onetime":"no"},'+
+				'      "fee": 95,'+
+				'      "fee_details": ['+
+				'        {'+
+				'          "amount": 95,'+
+				'          "currency": "usd",'+
+				'          "type": "stripe_fee",'+
+				'          "description": "Stripe processing fees",'+
+				'          "application": null,'+
+				'          "amount_refunded": 0'+
+				'        }'+
+				'      ],'+
+				'      "disputed": false'+
+				'    }'+
+				'  },'+
+				'  "object": "event",'+
+				'  "pending_webhooks": 1,'+
+				'  "request": null'+
+				'}';
+		}
+	}
+
 	public static String testData_InvoicePaymentSucceeded {
 		get {
 			return '{'+
