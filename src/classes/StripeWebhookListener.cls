@@ -1,4 +1,4 @@
-global abstract class StripeWebhookListener {
+global virtual class StripeWebhookListener {
 	public StripeEvent event;
 
 	global void handlePost() {
@@ -89,28 +89,44 @@ global abstract class StripeWebhookListener {
 	}
 	
 	// Handle the invoice.created webhook
-	global abstract void handle_InvoiceCreated(StripeInvoice invoice);
+	global virtual void handle_InvoiceCreated(StripeInvoice invoice) {
+		throw new StripeEvent.UnknownWebhookException('Not implemented');
+	}
 	
 	// Handle the invoice.payment_succeeded webhook
-	global abstract void handle_InvoicePaymentSucceeded(StripeInvoice invoice);
+	global virtual void handle_InvoicePaymentSucceeded(StripeInvoice invoice) {
+		throw new StripeEvent.UnknownWebhookException('Not implemented');
+	}
 	
 	// Handle the invoice.payment_failed webhook
-	global abstract void handle_InvoicePaymentFailed(StripeInvoice invoice);
+	global virtual void handle_InvoicePaymentFailed(StripeInvoice invoice) {
+		throw new StripeEvent.UnknownWebhookException('Not implemented');
+	}
 
 	// Handle the customer.subscription.deleted webhook
-	global abstract void handle_CustomerSubscriptionDeleted(StripeSubscription subscription);
+	global virtual void handle_CustomerSubscriptionDeleted(StripeSubscription subscription) {
+		throw new StripeEvent.UnknownWebhookException('Not implemented');
+	}
 	
 	// Handle the customer.updated webhook
-	global abstract void handle_CustomerUpdated(StripeCustomer customer);
+	global virtual void handle_CustomerUpdated(StripeCustomer customer) {
+		throw new StripeEvent.UnknownWebhookException('Not implemented');
+	}
 	
 	// Handle the charge.succeeded webhook
-	global abstract void handle_ChargeSucceeded(StripeCharge charge);
+	global virtual void handle_ChargeSucceeded(StripeCharge charge) {
+		throw new StripeEvent.UnknownWebhookException('Not implemented');
+	}
 
 	// Handle the charge.failed webhook
-	global abstract void handle_ChargeFailed(StripeCharge charge);
+	global virtual void handle_ChargeFailed(StripeCharge charge) {
+		throw new StripeEvent.UnknownWebhookException('Not implemented');
+	}
 
 	// Handle the charge.refunded webhook
-	global abstract void handle_ChargeRefunded(StripeCharge charge);
+	global virtual void handle_ChargeRefunded(StripeCharge charge) {
+		throw new StripeEvent.UnknownWebhookException('Not implemented');
+	}
 	
 	// Utility logging method
 	public void createWebhookTask(String subject, Id whatId) {
