@@ -115,6 +115,11 @@ global virtual class StripeWebhookListener {
 	
 	// Handle the charge.succeeded webhook
 	global virtual void handle_ChargeSucceeded(StripeCharge charge) {
+		handle_ChargeSucceeded(charge, true);
+	}
+
+	// Handle the charge.succeeded webhook
+	global virtual void handle_ChargeSucceeded(StripeCharge charge, Boolean allowDelayedProcessing) {
 		throw new StripeEvent.UnknownWebhookException('Not implemented');
 	}
 
