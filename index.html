@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Stripeforce by cirruspath</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Stripeforce</h1>
+        <h2>Stripe API Client Library for Force.com</h2>
+        <a href="https://github.com/cirruspath/stripeforce" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
+<a name="stripe-sdk-for-forcecom" class="anchor" href="#stripe-sdk-for-forcecom"><span class="octicon octicon-link"></span></a>Stripe SDK for Force.com</h1>
+
+<p><a href="http://stripe.com">Stripe</a> is a fantastic developer-friendly payment processing platform. This SDK was originally developed by Cirruspath in 2012. Please send comments, pull requests, and questions here on github.</p>
+
+<h2>
+<a name="stripe-api-documentation" class="anchor" href="#stripe-api-documentation"><span class="octicon octicon-link"></span></a>Stripe API Documentation</h2>
+
+<p>Read up: <a href="https://stripe.com/docs/api">https://stripe.com/docs/api</a></p>
+
+<h2>
+<a name="listening-for-webhooks" class="anchor" href="#listening-for-webhooks"><span class="octicon octicon-link"></span></a>Listening for Webhooks</h2>
+
+<p>To implement a listener for Stripe webhooks, start with the ExampleWebhookListener.cls class. This class isn't included in the 'src' directory to help avoid contributors' own webhook implementations from unintentionally gettting committed to this public repo or from being overwritten when they pull in the latest code.</p>
+
+<p>Note that not ALL Stripe webhooks are currently supported. However, support for additional webhooks can easily be added to the StripeWebhookListener class. If you make changes to it, please also include the corresponding updates to this webhook implementation class.</p>
+
+<h2>
+<a name="webhookdelayedprocessor" class="anchor" href="#webhookdelayedprocessor"><span class="octicon octicon-link"></span></a>WebhookDelayedProcessor</h2>
+
+<p>There is often an "indexing delay" after inserting (or updating) records in Salesforce. If your Webhook implementation relies on finding existing records to complete its task (i.e. searching for the account that corresponds to a new Stripe customer), you may find the WebhookDelayedProcessor job useful. </p>
+
+<p>In the example below, after searching for a 'license', we're unable to find one. We check to ensure that delayed processing is allowed (an implementation choice), and we create a <code>Stripe_Webhook__c</code> record with the webhook details. A scheduled job will then re-run the appropriate webhook handler up to 3 times, waiting 5 minutes beteween attempts -- adequate time for Salesforce indexing to catch up.</p>
+
+<pre><code>public void handle_ChargeSucceeded(StripeCharge charge, Boolean allowDelayedProcessing) {
+...
+        if (license == null) {
+            if (allowDelayedProcessing) {
+                System.debug(System.LoggingLevel.INFO, '\n**** License Not Found; Delay Webhook Processing'); 
+                Stripe_Webhook__c webhook = new Stripe_Webhook__c(
+                    Webhook_Type__c = 'charge.succeeded',
+                    Webhook_Data__c = JSON.serializePretty(charge)
+                );
+                insert webhook;
+                return;
+            } 
+
+            throw new WebhookDelayedProcessor.WebhookDelayedProcessorException();
+        }
+...
+}
+
+</code></pre>
+
+<p>Note that delayed processing is currently only implemented for the <code>charge.succeeded</code> webhook, but extending the concept to other webhooks (or making it generic) is not difficult.</p>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/cirruspath/stripeforce/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/cirruspath/stripeforce/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/cirruspath/stripeforce"></a> is maintained by <a href="https://github.com/cirruspath">cirruspath</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
