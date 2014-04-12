@@ -7,6 +7,7 @@ global class StripeEvent {
 	global String id;
 	global StripeError error;
 	
+	// map the event to the stripeData object that will be filled
 	private static Map<String, String> supported_events = new Map<String, String>{
 		'invoice.created' => 'StripeInvoice', 
 		'invoice.payment_succeeded' => 'StripeInvoice',
@@ -15,6 +16,7 @@ global class StripeEvent {
 		'customer.created' => 'StripeCustomer',
 		'customer.updated' => 'StripeCustomer',
 		'customer.card.created' => 'StripeCard',
+		'customer.card.updated' => 'StripeCard',
 		'charge.succeeded' => 'StripeCharge',
 		'charge.failed' => 'StripeCharge',
 		'charge.refunded' => 'StripeCharge',
