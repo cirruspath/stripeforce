@@ -1,5 +1,7 @@
 global class StripeCustomer {
 	private static final String SERVICE_URL = 'https://api.stripe.com/v1/customers';
+	global static final String TEST_ID = 'cus_00000000000000';
+
 	global Integer created;
 	global Integer account_balance;
 	global String description;
@@ -153,7 +155,7 @@ global class StripeCustomer {
 
 		if (metadata != null) {
 			for (String key : metadata.keySet()) {
-				if (metadata.get('key') != null) {
+				if (metadata.get(key) != null) {
 					payload.put('metadata['+key+']', metadata.get(key));
 				}
 			}

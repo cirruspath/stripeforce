@@ -14,7 +14,13 @@ global virtual class StripeWebhookListener {
 			response.statusCode = 200;
 			return;
 		} catch (System.Exception e) {
-			response.responseBody = Blob.valueOf(JSON.serializePretty(e));
+			System.debug(System.LoggingLevel.INFO, '\n**** Exception: '+e); 
+
+			Map<String, String> error = new Map<String, String>{
+				'type' => e.getTypeName(), 
+				'error' => e.getMessage()
+			};
+			response.responseBody = Blob.valueOf(JSON.serializePretty(error));
 			response.statusCode = 500;
 			return;
 		}
@@ -64,9 +70,9 @@ global virtual class StripeWebhookListener {
 				handle_CustomerCardCreated(event.stripeData.StripeCard);
 			}
 
-			//else if (event.stripeType == 'customer.card.updated') {
-			//	handle_CustomerCardUpdated(event.stripeData.StripeCard);
-			//}
+			else if (event.stripeType == 'customer.card.updated') {
+				handle_CustomerCardUpdated(event.stripeData.StripeCard);
+			}
 
 			//
 			// Charge webhooks
@@ -88,6 +94,19 @@ global virtual class StripeWebhookListener {
 				response.responseBody = Blob.valueOf('{success:false, event:"'+event.stripeType+'",message:"Unhandled event"}');
 				return;
 			}
+		} catch (WebhookDelayedProcessor.WebhookDelayedProcessorException e) {
+			Stripe_Webhook__c webhook = new Stripe_Webhook__c(
+				Webhook_Data__c = RestContext.request.requestBody.toString(),
+				Webhook_Type__c = event.stripeType,
+				Event_ID__c = event.id
+			);
+
+			insert webhook;
+			
+			response.statusCode = 200;
+			response.responseBody = Blob.valueOf('{success:true, event:"'+event.stripeType+'", delayed:'+webhook.Id+'}');
+			return;
+
 		} catch (StripeException e) {
 			response.responseBody = Blob.valueOf(JSON.serializePretty(e));
 			System.debug(System.LoggingLevel.INFO, '\n**** Listener Handler Error: '+response.responseBody.toString()); 
@@ -136,9 +155,9 @@ global virtual class StripeWebhookListener {
 	}
 	
 	// Handle the customer.card.updated webhook
-	//global virtual void handle_CustomerCardUpdated(StripeCard card) {
-	//	throw new StripeEvent.UnknownWebhookException('Not implemented');
-	//}
+	global virtual void handle_CustomerCardUpdated(StripeCard card) {
+		throw new StripeEvent.UnknownWebhookException('Not implemented');
+	}
 	
 	// Handle the charge.succeeded webhook
 	global virtual void handle_ChargeSucceeded(StripeCharge charge) {

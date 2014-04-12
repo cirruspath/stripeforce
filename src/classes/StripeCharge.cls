@@ -133,7 +133,7 @@ global class StripeCharge {
 
 		if (metadata != null) {
 			for (String key : metadata.keySet()) {
-				if (metadata.get('key') != null) {
+				if (metadata.get(key) != null) {
 					payload.put('metadata['+key+']', metadata.get(key));
 				}
 			}

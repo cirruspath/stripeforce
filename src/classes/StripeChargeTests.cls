@@ -28,7 +28,7 @@ public class StripeChargeTests {
 	
 	private static testMethod void test_createCharge() {
 		Test.startTest();
-		StripeCharge ch = StripeCharge.create('ch_abcdefghijklmn', 400);
+		StripeCharge ch = StripeCharge.create(StripeCustomer.TEST_ID, 400);
 		System.assertEquals('ch_GFAX3OIYUwQYU7', ch.id);
 		Test.stopTest();
 	}
