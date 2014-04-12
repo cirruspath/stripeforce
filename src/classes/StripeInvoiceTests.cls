@@ -1,11 +1,9 @@
 @isTest
 public class StripeInvoiceTests {
 
-	public static Integer test_StatusCode = 200;
-	
 	public static String testData_getInvoice {
 		get {
-			String json = '{'+
+			return '{'+
 				'  "date": 1378491876,'+
 				'  "id": "in_2WWyDTZpb3IvXD",'+
 				'  "period_start": 1378491876,'+
@@ -18,7 +16,7 @@ public class StripeInvoiceTests {
 				'        "date": 1355348659,'+
 				'        "amount": 6000,'+
 				'        "currency": "usd",'+
-				'        "customer": "cus_9mEg8W2FCx82C1",'+
+				'        "customer": "cus_00000000000000",'+
 				'        "id": "ii_0uBf5LGi6Bm1md",'+
 				'        "invoice": "in_0uBfMrUAiK1mvd",'+
 				'        "livemode": true'+
@@ -57,7 +55,7 @@ public class StripeInvoiceTests {
 				'  "customer": {'+
 				'    "object": "customer",'+
 				'    "created": 1378491876,'+
-				'    "id": "cus_2WWykkByyJuFB9",'+
+				'    "id": "cus_00000000000000",'+
 				'    "livemode": true,'+
 				'    "description": "Carbon War Room (005F00000018nWAIAY)",'+
 				'    "subscription": {'+
@@ -75,7 +73,7 @@ public class StripeInvoiceTests {
 				'      "object": "subscription",'+
 				'      "start": 1378491876,'+
 				'      "status": "active",'+
-				'      "customer": "cus_2WWykkByyJuFB9",'+
+				'      "customer": "cus_00000000000000",'+
 				'      "current_period_start": 1378491876,'+
 				'      "current_period_end": 1381083876,'+
 				'      "quantity": 1'+
@@ -84,7 +82,7 @@ public class StripeInvoiceTests {
 				'    "cards": {'+
 				'      "object": "list",'+
 				'      "count": 1,'+
-				'      "url": "/v1/customers/cus_2WWykkByyJuFB9/cards",'+
+				'      "url": "/v1/customers/cus_00000000000000/cards",'+
 				'      "data": ['+
 				'        {'+
 				'          "id": "card_2WWynYtWC1y0NL",'+
@@ -94,7 +92,7 @@ public class StripeInvoiceTests {
 				'          "exp_month": 6,'+
 				'          "exp_year": 2014,'+
 				'          "fingerprint": "w8vpQTA1QzR5EY4u",'+
-				'          "customer": "cus_2WWykkByyJuFB9",'+
+				'          "customer": "cus_00000000000000",'+
 				'          "country": "US",'+
 				'          "name": "Virginia Newton",'+
 				'          "address_line1": "1020 19th St NW, Suite 130",'+
@@ -117,7 +115,7 @@ public class StripeInvoiceTests {
 				'      "exp_month": 6,'+
 				'      "exp_year": 2014,'+
 				'      "fingerprint": "w8vpQTA1QzR5EY4u",'+
-				'      "customer": "cus_2WWykkByyJuFB9",'+
+				'      "customer": "cus_00000000000000",'+
 				'      "country": "US",'+
 				'      "name": "Virginia Newton",'+
 				'      "address_line1": "1020 19th St NW, Suite 130",'+
@@ -142,7 +140,6 @@ public class StripeInvoiceTests {
 				'  "ending_balance": null,'+
 				'  "next_payment_attempt": null'+
 				'}';
-			return json;
 		}
 	}
 
@@ -156,38 +153,19 @@ public class StripeInvoiceTests {
 		System.assert(obj != null);
 	}
 	
-	private static testMethod void test_getInvoice_200() {
+	private static testMethod void test_getInvoice() {
 		Test.startTest();
 		StripeInvoice invoice = StripeInvoice.getInvoice('in_0uBfMrUAiK1mvd');
 		System.assertEquals('in_2WWyDTZpb3IvXD', invoice.id);
 		Test.stopTest();
 	}
 	
-	private static testMethod void test_getInvoice_500() {
-		test_StatusCode = 500;
-
-		Test.startTest();
-		StripeInvoice invoice = StripeInvoice.getInvoice('in_2WWyDTZpb3IvXD');
-		System.assertEquals(null, invoice);
-		Test.stopTest();
-	}
-
-	private static testMethod void test_addlineItem_200() {
+	private static testMethod void test_addlineItem() {
 		StripeInvoice invoice = StripeInvoice.getInvoice('in_2WWyDTZpb3IvXD');
 
 		Test.startTest();
 		StripeInvoiceItemResponse li = invoice.addLineItem(3);
 		System.assertEquals('in_u19lZAWIe9AIl1', li.invoice_id);
-		Test.stopTest();
-	}
-	
-	private static testMethod void test_addlineItem_500() {
-		StripeInvoice invoice = StripeInvoice.getInvoice('in_0uBfMrUAiK1mvd');
-
-		Test.startTest();
-		test_StatusCode = 500;
-		StripeInvoiceItemResponse li = invoice.addLineItem(3);
-		System.assertEquals(null, li);
 		Test.stopTest();
 	}
 	

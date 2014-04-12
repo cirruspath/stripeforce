@@ -49,7 +49,7 @@ global class StripeCustomer {
 			}
 		} else {
 			hs.setBody(StripeCustomerTests.testData);
-			hs.setStatusCode(StripeCustomerTests.test_statusCode);
+			hs.setStatusCode(200);
 		}
 		system.debug('#### '+ hs.getBody());
 		
@@ -60,7 +60,7 @@ global class StripeCustomer {
 		try {
 			StripeCustomer o = StripeCustomer.parse(response);
 			System.debug(System.LoggingLevel.INFO, '\n**** Stripe Customer: '+o); 
-//			if (o.error != null) throw new StripeException(o.error);
+			//if (o.error != null) throw new StripeException(o.error);
 			mCustomers.put(customerId, o);
 			return o;
 		} catch (System.JSONException e) {
@@ -69,23 +69,66 @@ global class StripeCustomer {
 	}
 	
 	global static StripeCustomer create(String token, String description) {
-		return updateCustomer(null, token, description);
+		Map<String, String> properties = new Map<String, String>{
+			'card' => token,
+			'description' => description
+		};
+		return StripeCustomer.create(properties, null);
 	}
 	
 	global static StripeCustomer create(String token, String plan, String description) {
-		return updateCustomer(null, token, plan, description);
+		Map<String, String> properties = new Map<String, String>{
+			'card' => token,
+			'plan' => plan,
+			'description' => description
+		};
+		return create(properties, null);
 	}
 	
-	// Updates OR Creates customer
-	global static StripeCustomer updateCustomer(String customerId, String token, String description) {
-		return updateCustomer(customerId, token, null, description);
-	}
-	
-	global static StripeCustomer updateCustomer(String customerId, String token, String plan, String description) {
-		return updateCustomer(customerId, token, null, description, null);
+	// DEPRECATED
+	global static StripeCustomer create(String token, String plan, String description, Map<String, String> metadata) {
+		Map<String, String> properties = new Map<String, String>{
+			'card' => token,
+			'plan' => plan,
+			'description' => description
+		};
+		return create(properties, metadata);
 	}
 
+	global static StripeCustomer create(Map<String, String> properties, Map<String, String> metadata) {
+		return updateCustomer(null, properties, metadata);		
+	}
+	
+	// DEPRECATED
+	global static StripeCustomer updateCustomer(String customerId, String token, String description) {
+		Map<String, String> properties = new Map<String, String>{
+			'card' => token,
+			'description' => description
+		};
+		return updateCustomer(customerId, properties, new Map<String, String>());
+	}
+	
+	// DEPRECATED
+	global static StripeCustomer updateCustomer(String customerId, String token, String plan, String description) {
+		Map<String, String> properties = new Map<String, String>{
+			'card' => token,
+			'plan' => plan,
+			'description' => description
+		};
+		return updateCustomer(customerId, properties, new Map<String, String>());
+	}
+
+	// DEPRECATED
 	global static StripeCustomer updateCustomer(String customerId, String token, String plan, String description, Map<String, String> metadata) {
+		Map<String, String> properties = new Map<String, String>{
+			'card' => token,
+			'plan' => plan,
+			'description' => description
+		};
+		return updateCustomer(customerId, properties, metadata);
+	}
+
+	global static StripeCustomer updateCustomer(String customerId, Map<String, String> properties, Map<String, String> metadata) {
 		HttpRequest http = new HttpRequest();
 		
 		if (customerId == null) 
@@ -99,18 +142,22 @@ global class StripeCustomer {
 		EncodingUtil.base64Encode(headerValue);
 		http.setHeader('Authorization', authorizationHeader);
 		
-		Map<String, String> payload = new Map<String, String>{
-			'card' => token,
-			'description' => description
-		};
-
-		if (metadata != null) {
-			for (String key : metadata.keySet()) {
-				payload.put('metadata['+key+']', metadata.get(key));
+		Map<String, String> payload = new Map<String, String>();
+		if (properties != null) {
+			for (String key : properties.keySet()) {
+				if (properties.get(key) != null) {
+					payload.put(key, properties.get(key));
+				}
 			}
 		}
 
-		if (plan != null)	payload.put('plan', plan);
+		if (metadata != null) {
+			for (String key : metadata.keySet()) {
+				if (metadata.get('key') != null) {
+					payload.put('metadata['+key+']', metadata.get(key));
+				}
+			}
+		}
 
 		http.setBody(StripeUtil.urlify(payload));
 		System.debug(System.LoggingLevel.INFO, '\n**** REQUEST BODY:\n'+http.getBody()); 	
@@ -130,7 +177,7 @@ global class StripeCustomer {
 			}
 		} else {
 			hs.setBody(StripeCustomerTests.testData);
-			hs.setStatusCode(StripeCustomerTests.test_statusCode);
+			hs.setStatusCode(200);
 		}
 		
 		statusCode = hs.getStatusCode();
@@ -148,50 +195,20 @@ global class StripeCustomer {
 		}
 	}
 
-	global static StripeCustomer grantCoupon(String customerId, StripeCoupon coupon) {
-		HttpRequest http = new HttpRequest();
-		http.setEndpoint(StripeCustomer.SERVICE_URL+'/'+customerId);
-
-		http.setMethod('POST');
-		Blob headerValue = Blob.valueOf(StripeAPI.ApiKey + ':');
-		String authorizationHeader = 'BASIC ' +
-		EncodingUtil.base64Encode(headerValue);
-		http.setHeader('Authorization', authorizationHeader);
+	global static StripeCustomer setDefaultCard(String customerId, StripeCard card) {
+		Map<String, String> properties = new Map<String, String>{
+			'default_card' => card.id
+		};
 		
-		Map<String, String> payload = new Map<String, String>{
+		return updateCustomer(customerId, properties, null);
+	}
+
+	global static StripeCustomer grantCoupon(String customerId, StripeCoupon coupon) {
+		Map<String, String> properties = new Map<String, String>{
 			'coupon' => coupon.id
 		};
-
-		http.setBody(StripeUtil.urlify(payload));
-		System.debug(System.LoggingLevel.INFO, '\n**** REQUEST BODY:\n'+http.getBody()); 	
 		
-		String response;
-		Integer statusCode;
-		Http con = new Http();
-		HttpResponse hs = new HttpResponse();
-		
-		if (!Test.isRunningTest()) {
-			try {
-				hs = con.send(http);
-				system.debug('#### [1]'+ hs.getBody());
-				
-			} catch (CalloutException e) {
-				return null;
-			}
-		} else {
-			hs.setBody(StripeCustomerTests.testData);
-			hs.setStatusCode(StripeCustomerTests.test_statusCode);
-		}
-		
-		statusCode = hs.getStatusCode();
-		system.debug('$$statusCode = '+hs.getStatusCode());
-		
-		try {
-			StripeCustomer new_customer = StripeCustomer.parse(hs.getBody());
-			return new_customer;
-		} catch (System.JSONException e) {
-			return null;
-		}		
+		return updateCustomer(customerId, properties, null);	
 	}
 
 	global static StripeSubscription cancelSubscription(String customerId) {
@@ -216,7 +233,7 @@ global class StripeCustomer {
 			}
 		} else {
 			hs.setBody(StripeCustomerTests.testData_cancelSubscription);
-			hs.setStatusCode(StripeCustomerTests.test_statusCode);
+			hs.setStatusCode(200);
 		}
 
 		system.debug('#### '+ hs.getBody());
@@ -276,7 +293,7 @@ global class StripeCustomer {
 			}
 		} else {
 			hs.setBody(StripeCustomerTests.testData_updateSubscription);
-			hs.setStatusCode(StripeCustomerTests.test_statusCode);
+			hs.setStatusCode(200);
 		}
 
 		system.debug('#### '+ hs.getBody());
@@ -315,7 +332,7 @@ global class StripeCustomer {
 			}
 		} else {
 			hs.setBody(StripeCustomerTests.testData_getCustomers);
-			hs.setStatusCode(StripeCustomerTests.test_statusCode);
+			hs.setStatusCode(200);
 		}
 
 		t_json = hs.getBody();

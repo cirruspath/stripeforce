@@ -22,17 +22,6 @@
         <type>Checkbox</type>
     </fields>
     <fields>
-        <fullName>Stripe_Live_Key__c</fullName>
-        <caseSensitive>false</caseSensitive>
-        <externalId>false</externalId>
-        <inlineHelpText>LIVE Stripe API Key</inlineHelpText>
-        <label>Stripe Live Key</label>
-        <length>20</length>
-        <required>true</required>
-        <type>Text</type>
-        <unique>true</unique>
-    </fields>
-    <fields>
         <fullName>Stripe_Publishable_Live_Key__c</fullName>
         <externalId>false</externalId>
         <label>Stripe Publishable Live Key</label>
@@ -69,17 +58,6 @@
         <required>true</required>
         <type>Text</type>
         <unique>false</unique>
-    </fields>
-    <fields>
-        <fullName>Stripe_Test_Key__c</fullName>
-        <caseSensitive>false</caseSensitive>
-        <externalId>false</externalId>
-        <inlineHelpText>TEST Stripe API key</inlineHelpText>
-        <label>Stripe Test Key</label>
-        <length>20</length>
-        <required>true</required>
-        <type>Text</type>
-        <unique>true</unique>
     </fields>
     <label>Stripe Settings</label>
 </CustomObject>

@@ -12,7 +12,9 @@ global class StripeEvent {
 		'invoice.payment_succeeded' => 'StripeInvoice',
 		'invoice.payment_failed' => 'StripeInvoice',
 		'customer.subscription.deleted' => 'StripeSubscription',
+		'customer.created' => 'StripeCustomer',
 		'customer.updated' => 'StripeCustomer',
+		'customer.card.created' => 'StripeCard',
 		'charge.succeeded' => 'StripeCharge',
 		'charge.failed' => 'StripeCharge',
 		'charge.refunded' => 'StripeCharge',
@@ -25,6 +27,9 @@ global class StripeEvent {
 		global StripeInvoice StripeInvoice;
 		global StripeSubscription StripeSubscription;
 		global StripeCustomer StripeCustomer;
+		global StripeCard StripeCard;
+
+		global Map<String, String> previous_attributes;
 	}
 	
 	public static StripeEvent parse(String json) {

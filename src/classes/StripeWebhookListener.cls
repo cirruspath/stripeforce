@@ -52,9 +52,21 @@ global virtual class StripeWebhookListener {
 			//
 			// Customer webhooks
 			//
+			else if (event.stripeType == 'customer.created') {
+				handle_CustomerCreated(event.stripeData.StripeCustomer);
+			}
+
 			else if (event.stripeType == 'customer.updated') {
 				handle_CustomerUpdated(event.stripeData.StripeCustomer);
 			}
+
+			else if (event.stripeType == 'customer.card.created') {
+				handle_CustomerCardCreated(event.stripeData.StripeCard);
+			}
+
+			//else if (event.stripeType == 'customer.card.updated') {
+			//	handle_CustomerCardUpdated(event.stripeData.StripeCard);
+			//}
 
 			//
 			// Charge webhooks
@@ -109,9 +121,24 @@ global virtual class StripeWebhookListener {
 	}
 	
 	// Handle the customer.updated webhook
+	global virtual void handle_CustomerCreated(StripeCustomer customer) {
+		throw new StripeEvent.UnknownWebhookException('Not implemented');
+	}
+	
+	// Handle the customer.updated webhook
 	global virtual void handle_CustomerUpdated(StripeCustomer customer) {
 		throw new StripeEvent.UnknownWebhookException('Not implemented');
 	}
+	
+	// Handle the customer.card.created webhook
+	global virtual void handle_CustomerCardCreated(StripeCard card) {
+		throw new StripeEvent.UnknownWebhookException('Not implemented');
+	}
+	
+	// Handle the customer.card.updated webhook
+	//global virtual void handle_CustomerCardUpdated(StripeCard card) {
+	//	throw new StripeEvent.UnknownWebhookException('Not implemented');
+	//}
 	
 	// Handle the charge.succeeded webhook
 	global virtual void handle_ChargeSucceeded(StripeCharge charge) {

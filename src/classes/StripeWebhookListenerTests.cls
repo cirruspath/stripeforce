@@ -47,6 +47,10 @@ public class StripeWebhookListenerTests {
 		} catch (StripeEvent.UnknownWebhookException e) {}	
 
 		try {
+			listener.handle_CustomerCardCreated(new StripeCard());
+		} catch (StripeEvent.UnknownWebhookException e) {}	
+
+		try {
 			listener.handle_ChargeSucceeded(new StripeCharge());
 		} catch (StripeEvent.UnknownWebhookException e) {}	
 

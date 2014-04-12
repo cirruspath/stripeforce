@@ -1,20 +1,10 @@
 @isTest
 public class StripeTokenTests {
 
-	public static Integer test_StatusCode = 200;
-
-	private static testMethod void test_getToken_200() {
+	private static testMethod void test_getToken() {
 		Test.startTest();
 		StripeToken token = StripeToken.getToken('tok_abcdefghijklmn');
 		System.assertEquals('tok_0mUVL0s0kaJ4eg', token.id);
-		Test.stopTest();
-	}
-	
-	private static testMethod void test_getToken_500() {
-		test_StatusCode = 500;
-		Test.startTest();
-		StripeToken token = StripeToken.getToken('tok_0mUVL0s0kaJ4eg');
-		System.assertEquals(null, token);
 		Test.stopTest();
 	}
 
@@ -31,10 +21,10 @@ public class StripeTokenTests {
 
 	private static testMethod void testParseError() {
 		String json = '{'+
-		'  \"error\": {'+
-		'    \"message\": \"No such singleusecard: tok_AM9jAAwclVBlBJ\",'+
-		'    \"param\": \"token\",'+
-		'    \"type\": \"invalid_request_error\"'+
+		'  "error": {'+
+		'    "message": "No such singleusecard: tok_AM9jAAwclVBlBJ",'+
+		'    "param": "token",'+
+		'    "type": "invalid_request_error"'+
 		'  }'+
 		'}';
 		StripeToken obj = StripeToken.parse(json);
