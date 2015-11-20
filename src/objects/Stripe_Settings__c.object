@@ -10,6 +10,7 @@
         <label>Delayed Webhook Processor ID</label>
         <length>18</length>
         <required>false</required>
+        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -19,6 +20,7 @@
         <externalId>false</externalId>
         <inlineHelpText>Check this to use the LIVE key in all API operations.</inlineHelpText>
         <label>Is Live Environment</label>
+        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -27,6 +29,7 @@
         <label>Stripe Publishable Live Key</label>
         <length>40</length>
         <required>true</required>
+        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -36,6 +39,7 @@
         <label>Stripe Publishable Test Key</label>
         <length>40</length>
         <required>true</required>
+        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -46,6 +50,7 @@
         <label>Stripe Secret Live Key</label>
         <length>40</length>
         <required>true</required>
+        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -56,6 +61,7 @@
         <label>Stripe Secret Test Key</label>
         <length>40</length>
         <required>true</required>
+        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
