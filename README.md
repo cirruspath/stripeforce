@@ -1,6 +1,10 @@
 Development Fork of StripeForce - A Stripe SDK for the Force.com Platform
 ========================================
 The groundwork for this library was done by Ryan Huff. Feel free to use my development fork, but please consider helping to improve the original StripeForce by sending back all significant improvements as pull requests. So much said, here comes the original README content...
+<a href="https://githubsfdeploy.herokuapp.com?owner=dstdia&repo=stripeforce">
+  <img alt="Deploy to Salesforce"
+       src="https://raw.githubusercontent.com/afawcett/githubsfdeploy/master/src/main/webapp/resources/img/deploy.png">
+</a>
 
 Stripe SDK for Force.com
 ========================================
