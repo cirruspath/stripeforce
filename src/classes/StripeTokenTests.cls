@@ -34,5 +34,4 @@ public class StripeTokenTests {
 	private static testMethod void test() {
 		new StripeToken();
 	}
-
 }

@@ -142,7 +142,7 @@ public class StripeInvoiceTests {
 				'}';
 		}
 	}
-
+    
 	private static testMethod void testParse() {
 		String json = testData_getInvoice;
 		StripeInvoice obj = StripeInvoice.parse(json);
@@ -174,5 +174,4 @@ public class StripeInvoiceTests {
 		new StripeInvoice.Lines();
 		new StripeInvoice.InvoiceItem();
 	}
-
 }

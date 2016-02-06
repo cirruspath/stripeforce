@@ -20,6 +20,7 @@ public class TestStripe {
 	}
 	
 	private static testmethod void testStripeAPI() {
+		Test.startTest();
 		System.assertEquals(null, StripeAPI.ApiKey);
 		System.assertEquals(null, StripeAPI.PublishableKey);
 		System.assertEquals(true, StripeAPI.isTest);
@@ -38,6 +39,7 @@ public class TestStripe {
 		System.assertEquals(true, StripeAPI.isTest);
 		System.assertEquals('123', StripeAPI.ApiKey);
 		System.assertEquals('def', StripeAPI.PublishableKey);
+		Test.stopTest();
 	}
 		
 	public static void StripeDataSetup() {
