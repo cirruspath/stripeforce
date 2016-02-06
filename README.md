@@ -1,3 +1,7 @@
+Development Fork of StripeForce - A Stripe SDK for the Force.com Platform
+========================================
+The groundwork for this library was done by Ryan Huff. Feel free to use my development fork, but please consider helping to improve the original StripeForce by sending back all significant improvements as pull requests. So much said, here comes the original README content...
+
 Stripe SDK for Force.com
 ========================================
 
