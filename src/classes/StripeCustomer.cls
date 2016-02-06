@@ -72,7 +72,7 @@ global class StripeCustomer {
 	
 	global static StripeCustomer create(String token, String description) {
 		Map<String, String> properties = new Map<String, String>{
-			'card' => token,
+			'source' => token,
 			'description' => description
 		};
 		return StripeCustomer.create(properties, null);
@@ -131,18 +131,6 @@ global class StripeCustomer {
 	}
 
 	global static StripeCustomer updateCustomer(String customerId, Map<String, String> properties, Map<String, String> metadata) {
-		HttpRequest http = new HttpRequest();
-		
-		if (customerId == null) 
-			http.setEndpoint(StripeCustomer.SERVICE_URL);
-		else 
-			http.setEndpoint(StripeCustomer.SERVICE_URL+'/'+customerId);
-
-		http.setMethod('POST');
-		Blob headerValue = Blob.valueOf(StripeAPI.ApiKey + ':');
-		String authorizationHeader = 'BASIC ' +
-		EncodingUtil.base64Encode(headerValue);
-		http.setHeader('Authorization', authorizationHeader);
 		
 		Map<String, String> payload = new Map<String, String>();
 		if (properties != null) {
@@ -159,9 +147,25 @@ global class StripeCustomer {
 					payload.put('metadata['+key+']', metadata.get(key));
 				}
 			}
+	
 		}
 
-		http.setBody(StripeUtil.urlify(payload));
+		HttpRequest http = new HttpRequest();
+		
+		if (customerId == null) 
+			http.setEndpoint(StripeCustomer.SERVICE_URL + StripeUtil.urlify(payload));
+		else 
+			http.setEndpoint(StripeCustomer.SERVICE_URL+'/'+customerId + StripeUtil.urlify(payload));
+
+		http.setMethod('POST');
+		System.debug('DIA API Key' + StripeAPI.ApiKey);
+		Blob headerValue = Blob.valueOf(StripeAPI.ApiKey + ':');
+		String authorizationHeader = 'BASIC ' +
+		EncodingUtil.base64Encode(headerValue);
+		http.setHeader('Authorization', authorizationHeader);
+		
+		//http.setBody(StripeUtil.urlify(payload));
+
 		System.debug(System.LoggingLevel.INFO, '\n**** REQUEST BODY:\n'+http.getBody()); 	
 		
 		String response;

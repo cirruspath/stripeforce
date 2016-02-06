@@ -603,6 +603,94 @@ public class StripeEventTests {
 		}
 	}
 
+	public static String testData_CustomerCreated {
+		get {
+			return '{'+
+				'  "id": "evt_103ctn2BONonlYaUjvgdxaMj",'+
+				'  "created": 1394260283,'+
+				'  "livemode": false,'+
+				'  "type": "customer.created",'+
+				'  "data": {'+
+				'    "object": {'+
+				'      "object": "customer",'+
+				'      "created": 1383951929,'+
+				'      "id": "cus_00000000000000",'+
+				'      "livemode": false,'+
+				'      "description": "Life in the Clouds",'+
+				'      "email": null,'+
+				'      "delinquent": false,'+
+				'      "metadata": {},'+
+				'      "subscriptions": {'+
+				'        "object": "list",'+
+				'        "count": 0,'+
+				'        "url": "/v1/customers/cus_00000000000000/subscriptions",'+
+				'        "data": []'+
+				'      },'+
+				'      "discount": null,'+
+				'      "account_balance": 0,'+
+				'      "currency": null,'+
+				'      "cards": {'+
+				'        "object": "list",'+
+				'        "count": 2,'+
+				'        "url": "/v1/customers/cus_00000000000000/cards",'+
+				'        "data": ['+
+				'          {'+
+				'            "id": "card_103ctg2BONonlYaUl4Njcd7V",'+
+				'            "object": "card",'+
+				'            "last4": "1881",'+
+				'            "type": "Visa",'+
+				'            "exp_month": 3,'+
+				'            "exp_year": 2016,'+
+				'            "fingerprint": "oVSfQJDcxFfCBlGB",'+
+				'            "customer": "cus_00000000000000",'+
+				'            "country": "US",'+
+				'            "name": null,'+
+				'            "address_line1": null,'+
+				'            "address_line2": null,'+
+				'            "address_city": null,'+
+				'            "address_state": null,'+
+				'            "address_zip": null,'+
+				'            "address_country": null,'+
+				'            "cvc_check": "pass",'+
+				'            "address_line1_check": null,'+
+				'            "address_zip_check": null'+
+				'          },'+
+				'          {'+
+				'            "id": "card_102uCj2BONonlYaULwspZstB",'+
+				'            "object": "card",'+
+				'            "last4": "4242",'+
+				'            "type": "Visa",'+
+				'            "exp_month": 11,'+
+				'            "exp_year": 2014,'+
+				'            "fingerprint": "jTU2IfFVCVRg8CCh",'+
+				'            "customer": "cus_00000000000000",'+
+				'            "country": "US",'+
+				'            "name": null,'+
+				'            "address_line1": null,'+
+				'            "address_line2": null,'+
+				'            "address_city": null,'+
+				'            "address_state": null,'+
+				'            "address_zip": null,'+
+				'            "address_country": null,'+
+				'            "cvc_check": "pass",'+
+				'            "address_line1_check": null,'+
+				'            "address_zip_check": null'+
+				'          }'+
+				'        ]'+
+				'      },'+
+				'      "default_card": "card_103ctg2BONonlYaUl4Njcd7V",'+
+				'      "subscription": null'+
+				'    },'+
+				'    "previous_attributes": {'+
+				'      "default_card": "card_102uCj2BONonlYaULwspZstB"'+
+				'    }'+
+				'  },'+
+				'  "object": "event",'+
+				'  "request": "iar_3ctnxZZ4RjfXuK"'+
+				'}';
+		}
+	}
+
 	private static testMethod void test_general() {
 		new StripeEvent();
 		new StripeEvent.EventData();

@@ -12,8 +12,16 @@ global class StripeUtil {
 		return DateTime.newInstance(l).date();
 	}
 
-	global static String urlify(Map<String, String> params) {
+	/*global static String urlify(Map<String, String> params) {
 		String url = '&';
+		for (String key : params.keySet()) {
+			url += EncodingUtil.urlEncode(key, 'UTF-8') + '=' + EncodingUtil.urlEncode(blankValue(params.get(key), ''), 'UTF-8') + '&';
+		}
+		return url;
+	}*/
+
+	global static String urlify(Map<String, String> params) {
+		String url = '?';
 		for (String key : params.keySet()) {
 			url += EncodingUtil.urlEncode(key, 'UTF-8') + '=' + EncodingUtil.urlEncode(blankValue(params.get(key), ''), 'UTF-8') + '&';
 		}
