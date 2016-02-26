@@ -26,4 +26,13 @@ public class StripeCardTests {
 				'}';
 		}
 	}
+
+	@isTest
+	public static void createStripeCardTest () {
+
+
+		Test.startTest();
+		StripeCard.create('cus_1234567abcdef', 'tok_8901234ghijk');
+		Test.stopTest();
+	}
 }
