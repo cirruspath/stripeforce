@@ -6,8 +6,6 @@ private class StripeUtilTests {
 	}
 
 	private static testMethod void testUtil() {
-
-		String s = null; 
 		System.assertEquals('abc', StripeUtil.blankValue('abc', 'def'));
 		System.assertEquals('def', StripeUtil.blankValue(s, 'def'));
 		System.assertEquals('def', StripeUtil.blankValue('', 'def'));
